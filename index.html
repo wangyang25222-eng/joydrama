@@ -14,61 +14,6 @@
             margin-top: 3px;
         }
 
-        .search-box {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            width: 280px;
-            background: #1f1f1f;
-            border: 1px solid #444;
-            border-radius: 8px;
-            padding: 12px;
-            z-index: 100;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 8px 12px;
-            background: #2a2a2a;
-            border: 1px solid #444;
-            border-radius: 20px;
-            color: white;
-            font-size: 14px;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: #4caf50;
-        }
-
-        .search-hot {
-            margin-top: 12px;
-        }
-
-        .hot-title {
-            font-size: 12px;
-            color: #aaa;
-            margin-bottom: 8px;
-        }
-
-        .hot-items {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .hot-items span {
-            font-size: 12px;
-            color: #ccc;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .hot-items span:hover {
-            color: #4caf50;
-        }
-
         .avatar-btn {
             background: #3a3a3a;
             border-radius: 50%;
@@ -356,11 +301,6 @@
             font-weight: 500;
         }
 
-        .nav-item.active {
-            color: #4caf50;
-            font-weight: 500;
-        }
-
         .page {
             display: none;
         }
@@ -429,27 +369,6 @@
                     </svg>
                     搜索
                 </button>
-                <div class="search-box" id="searchBox" style="display: none;">
-                    <div style="position: relative;">
-                        <input type="text" id="searchInput" placeholder="搜索任意内容" autocomplete="off"
-                            style="padding-left: 32px;">
-                        <svg style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: #ccc;"
-                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="10" cy="10" r="7" />
-                            <line x1="15" y1="15" x2="21" y2="21" />
-                        </svg>
-                    </div>
-                    <div class="search-hot" id="searchHot">
-                        <div class="hot-title">热门影片</div>
-                        <div class="hot-items">
-                            <span>致命交易：我的爸爸是重火王</span>
-                            <span>刚领证就离婚！星际指官</span>
-                            <span>载痕狂龍</span>
-                            <span>家庭主夫是千王</span>
-                            <span>总裁夫人回乡记</span>
-                        </div>
-                    </div>
-                </div>
             </div>
             <button class="lang-btn" id="downloadBtn" onclick="alert('下载功能开发中，后续将提供APP下载链接')">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -556,7 +475,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-
         // 生成15部影片
         function generateItems(prefix, count = 15) {
             let items = [];
@@ -785,44 +703,6 @@
         renderSubPage('varietyPage', 'variety');
         renderSubPage('nightPage', 'night');
         renderEventPage();
-        // 搜索功能
-        const searchBtn = document.getElementById('searchBtn');
-        const searchBox = document.getElementById('searchBox');
-        const searchInput = document.getElementById('searchInput');
-
-        searchBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            searchBox.style.display = 'block';
-            searchInput.focus();
-        });
-
-        // 点击页面其他地方关闭搜索框
-        document.addEventListener('click', (e) => {
-            if (!searchBox.contains(e.target) && e.target !== searchBtn) {
-                searchBox.style.display = 'none';
-                searchInput.value = '';
-            }
-        });
-
-        // 按回车关闭并记录关键词
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const keyword = searchInput.value;
-                console.log('搜索关键词：', keyword);
-                searchBox.style.display = 'none';
-                searchInput.value = '';
-            }
-        });
-
-        // 点击热门影片
-        document.querySelectorAll('.hot-items span').forEach(item => {
-            item.addEventListener('click', () => {
-                const keyword = item.innerText;
-                console.log('搜索关键词：', keyword);
-                searchBox.style.display = 'none';
-                searchInput.value = '';
-            });
-        });
     </script>
 </body>
 
