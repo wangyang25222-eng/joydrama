@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Joy Drama</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #1f1f1f;
+            color: #ffffff;
+            padding: 0 20px 70px 20px;
+        }
+.header {
+    background: #1f1f1f;
+    padding: 12px 20px;
+    margin-left: -20px;
+    margin-right: -20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #333;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffffff;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    margin-left: 20px;
+}
+.logo:hover {
+    opacity: 0.7;
+}
+        .logo-icon { font-size: 24px; }
+.right-area {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-right: 20px;
+}
+        .top-categories {
+            display: flex;
+            gap: 16px;
+        }
+.top-cat {
+    font-size: 15px;
+    color: #ccc;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+}
+.top-cat:hover {
+    color: #4caf50;
+}
+        .top-cat.active {
+            color: #4caf50;
+            font-weight: 500;
+        }
+.search-input {
+    padding: 6px 12px;
+    padding-left: 32px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background: #2a2a2a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='18' height='18' fill='none' stroke='%23ccc' stroke-width='2'%3E%3Ccircle cx='10' cy='10' r='7'/%3E%3Cline x1='15' y1='15' x2='21' y2='21'/%3E%3C/svg%3E") no-repeat left 10px center;
+    background-size: 16px;
+    font-size: 14px;
+    width: 220px;
+    color: white;
+}.search-input:focus {
+    outline: none;
+    border-color: #4caf50;
+}
+.lang-btn {
+    background: none;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    color: #ccc;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1;
+}.lang-btn:hover {
+    color: #4caf50;
+}
+.lang-btn.active {
+    color: #4caf50;
+}
+.swiper {
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+    height: 530px;
+}
+        .swiper-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .swiper-pagination-bullet {
+            width: 10px;
+            height: 10px;
+            background: rgba(255,255,255,0.6);
+            opacity: 1;
+        }
+        .swiper-pagination-bullet-active {
+            background: #ffffff;
+            width: 14px;
+            height: 14px;
+        }
+        .section { margin: 24px 0; }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0 16px 8px 16px;
+        }
+        .section-title { font-size: 18px; font-weight: 600; color: #fff; }
+        .more-link { font-size: 13px; color: #e67e22; cursor: pointer; }
+.scroll-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: flex;
+    gap: 12px;
+    padding: 0 16px;
+    scrollbar-width: none;
+}
+.scroll-x::-webkit-scrollbar {
+    display: none;
+}
+.card {
+    flex: 0 0 160px;
+    background: #1f1f1f;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+.card:hover {
+    transform: scale(1.02);
+}
+.card img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+}
+.card h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 8px 10px 2px;
+    color: #f0f0f0;
+    line-height: 1.3;
+}
+
+        .event-box {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+        }
+        .event-card {
+            background: #1f1f1f;
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .event-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .event-card h3 {
+            padding: 16px;
+            font-size: 18px;
+            color: #e67e22;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #1a1a1a;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 12px;
+            border-top: 1px solid #333;
+        }
+        .nav-item {
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            cursor: pointer;
+        }
+        .nav-item.active { color: #e67e22; font-weight: 500; }
+        .page { display: none; }
+        .page.active { display: block; }
+.swiper-button-next,
+.swiper-button-prev {
+    width: 80px;
+    height: 80px;
+    background: rgba(128, 128, 128, 0.6);
+    border-radius: 50%;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: auto;
+    z-index: 20;
+}
+.swiper-button-prev {
+    left: 40px;
+}
+.swiper-button-next {
+    right: 40px;
+}
+.swiper:hover .swiper-button-next,
+.swiper:hover .swiper-button-prev {
+    opacity: 1;
+}
+.swiper-button-next::after,
+.swiper-button-prev::after {
+    font-size: 40px;
+    font-weight: bold;
+    color: white;
+}
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div style="display: flex; align-items: center; gap: 20px;">
+        <div class="logo" id="logoBtn">
+            <span class="logo-icon">🎬</span>
+            <span>Joy Drama</span>
+        </div>
+        <div class="top-categories" id="topCategories">
+            <span class="top-cat" data-cat="free">免费</span>
+            <span class="top-cat" data-cat="anime">动漫</span>
+            <span class="top-cat" data-cat="variety">综艺</span>
+            <span class="top-cat" data-cat="night">深夜</span>
+            <span class="top-cat" data-cat="event">活动</span>
+        </div>
+    </div>
+    <div class="right-area">
+        <input type="text" class="search-input" placeholder="搜索任意内容" id="searchInput">
+        <button class="lang-btn" onclick="alert('语言切换开发中')">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="2" y1="12" x2="22" y2="12" />
+        <path d="M12 2a15 15 0 0 0 0 20 15 15 0 0 0 0-20z" />
+    </svg>
+    简体中文
+</button>
+    </div>
+</div>
+
+<!-- 首页内容 -->
+<div id="homePage" class="page active">
+    <div id="homeSwiper" class="swiper">
+    <div class="swiper-wrapper" id="homeSwiperWrapper"></div>
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>
+    <div id="homeContent"></div>
+</div>
+
+<!-- 其他分类内容容器 -->
+<div id="freePage" class="page"></div>
+<div id="animePage" class="page"></div>
+<div id="varietyPage" class="page"></div>
+<div id="nightPage" class="page"></div>
+<div id="eventPage" class="page"></div>
+
+<!-- 追剧页面 -->
+<div id="following" class="page">
+    <div style="padding: 16px;"><h2>追剧</h2><div id="followingList"></div></div>
+</div>
+
+<!-- 我的页面 -->
+<div id="profile" class="page">
+    <div style="padding: 16px;">
+        <div style="background: #1f1f1f; border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between;">
+                <div><div style="color:#aaa;">积分</div><div style="font-size:24px;">1280</div></div>
+                <div><div style="color:#aaa;">收藏</div><div style="font-size:24px;">6</div></div>
+                <div><div style="color:#aaa;">播放记录</div><div style="font-size:24px;">12</div></div>
+            </div>
+        </div>
+        <div style="background: #1f1f1f; border-radius: 16px; padding: 16px;">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;" onclick="alert('开通经销商')">📦 经销商</div>
+                <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;" onclick="alert('制片人')">🎬 制片人</div>
+                <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;" onclick="alert('联系我们')">📞 联系</div>
+                <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;" onclick="alert('邀请朋友')">👥 邀请</div>
+                <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;" onclick="alert('获取积分')">🎁 积分</div>
+                <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;" onclick="alert('团队指南')">📘 团队</div>
+                <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;" onclick="alert('用户协议')">📄 协议</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" data-page="homePage">首页</div>
+    <div class="nav-item" data-page="following">追剧</div>
+    <div class="nav-item" data-page="profile">我的</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    // 生成15部影片
+    function generateItems(prefix, count = 15) {
+        let items = [];
+        for (let i = 1; i <= count; i++) {
+            items.push({
+                name: `${prefix}${i}`,
+                img: `https://picsum.photos/300/180?random=${Math.random()}`,
+                rating: (7 + Math.random() * 2).toFixed(1)
+            });
+        }
+        return items;
+    }
+
+    // 首页分类
+    const homeCategories = [
+        { name: "热门榜单", key: "hot", items: generateItems("热剧", 15) },
+        { name: "豪门霸总", key: "boss", items: generateItems("豪门", 15) },
+        { name: "甜宠喜剧", key: "sweet", items: generateItems("甜宠", 15) },
+        { name: "古装穿越", key: "costume", items: generateItems("古装", 15) },
+        { name: "都市职场", key: "office", items: generateItems("职场", 15) },
+        { name: "悬疑惊悚", key: "suspense", items: generateItems("悬疑", 15) }
+    ];
+
+    // 子分类
+    const subCategories = {
+        free: [
+            { name: "全集短剧", items: generateItems("免费短剧", 15) },
+            { name: "免费电影", items: generateItems("免费电影", 15) }
+        ],
+        anime: [
+            { name: "热血动漫", items: generateItems("热血动漫", 15) },
+            { name: "治愈番剧", items: generateItems("治愈番剧", 15) }
+        ],
+        variety: [
+            { name: "爆笑综艺", items: generateItems("爆笑综艺", 15) },
+            { name: "真人秀场", items: generateItems("真人秀场", 15) }
+        ],
+        night: [
+            { name: "深夜剧场", items: generateItems("深夜剧场", 15) },
+            { name: "悬疑惊悚", items: generateItems("深夜惊悚", 15) }
+        ]
+    };
+
+    // 轮播图
+    const banners = {
+        home: ["https://picsum.photos/800/530?random=100", "https://picsum.photos/800/530?random=101", "https://picsum.photos/800/530?random=102"],
+        free: ["https://picsum.photos/800/530?random=100", "https://picsum.photos/800/530?random=101", "https://picsum.photos/800/530?random=102"],
+        anime: ["https://picsum.photos/800/530?random=103", "https://picsum.photos/800/530?random=104", "https://picsum.photos/800/530?random=105"],
+        variety: ["https://picsum.photos/800/530?random=106", "https://picsum.photos/800/530?random=107", "https://picsum.photos/800/530?random=108"],
+        night: ["https://picsum.photos/800/530?random=109", "https://picsum.photos/800/530?random=110", "https://picsum.photos/800/530?random=111"]
+    };
+
+    // 初始化轮播图
+function initSwiper(containerId, wrapperId, images) {
+    const wrapper = document.getElementById(wrapperId);
+    if (!wrapper) return;
+    wrapper.innerHTML = images.map(img => `<div class="swiper-slide"><img src="${img}"></div>`).join('');
+    setTimeout(() => {
+        new Swiper(`#${containerId}`, {
+            loop: true,
+            autoplay: {
+                delay: 3000,
+                disableOnInteraction: false, 
+            },
+            speed: 400,
+            spaceBetween: 0,
+            slidesPerView: 1,
+            grabCursor: true,
+            pagination: { el: `#${containerId} .swiper-pagination`, clickable: true },
+            navigation: {
+                nextEl: `#${containerId} .swiper-button-next`,
+                prevEl: `#${containerId} .swiper-button-prev`,
+            }
+        });
+    }, 50);
+}
+
+    // 渲染分类
+    function renderCategories(containerId, categories) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = categories.map(cat => `
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-title">${cat.name}</span>
+                    <span class="more-link" onclick="alert('更多${cat.name}')">更多 →</span>
+                </div>
+                <div class="scroll-x" id="cat-${cat.key}"></div>
+            </div>
+        `).join('');
+        categories.forEach(cat => {
+            const listContainer = document.getElementById(`cat-${cat.key}`);
+            listContainer.innerHTML = cat.items.map(item => `
+                <div class="card" onclick="alert('《${item.name}》播放地址待配置')">
+                    <img src="${item.img}">
+                    <h4>${item.name}</h4>
+                </div>
+            `).join('');
+        });
+    }
+
+    // 渲染子分类页面（免费、动漫等）
+    function renderSubPage(pageId, catKey) {
+        const container = document.getElementById(pageId);
+        if (!container) return;
+        const catBanners = banners[catKey];
+        const subCats = subCategories[catKey];
+        let html = `<div class="swiper" id="swiper-${catKey}">
+    <div class="swiper-wrapper" id="swiper-wrapper-${catKey}"></div>
+    <div class="swiper-pagination"></div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+</div>`;
+        subCats.forEach(sub => {
+            html += `
+                <div class="section">
+                    <div class="section-header">
+                        <span class="section-title">${sub.name}</span>
+                        <span class="more-link" onclick="alert('更多${sub.name}')">更多 →</span>
+                    </div>
+                    <div class="scroll-x" id="subcat-${pageId}-${sub.name.replace(/ /g, '')}"></div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+        initSwiper(`swiper-${catKey}`, `swiper-wrapper-${catKey}`, catBanners);
+        subCats.forEach(sub => {
+            const listContainer = document.getElementById(`subcat-${pageId}-${sub.name.replace(/ /g, '')}`);
+            listContainer.innerHTML = sub.items.map(item => `
+                <div class="card" onclick="alert('《${item.name}》播放地址待配置')">
+                    <img src="${item.img}">
+                    <h4>${item.name}</h4>
+                </div>
+            `).join('');
+        });
+    }
+
+    // 渲染活动页面
+    function renderEventPage() {
+        const container = document.getElementById('eventPage');
+        container.innerHTML = `
+            <div class="event-box">
+                <div class="event-card" onclick="alert('每日任务：签到领积分')">
+                    <img src="https://picsum.photos/800/400?random=200">
+                    <h3>📅 每日任务</h3>
+                </div>
+                <div class="event-card" onclick="alert('有奖参与：写影评赢会员')">
+                    <img src="https://picsum.photos/800/400?random=201">
+                    <h3>🎁 有奖参与</h3>
+                </div>
+            </div>
+        `;
+    }
+
+    // 渲染首页
+let homeSwiperInitialized = false;
+
+function renderHome() {
+    initSwiper('homeSwiper', 'homeSwiperWrapper', banners.home);
+    renderCategories('homeContent', homeCategories);
+}
+
+    // 页面切换
+    let currentPage = 'homePage';
+    function switchTo(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        currentPage = pageId;
+        if (pageId === 'homePage') renderHome();
+        if (pageId === 'freePage') renderSubPage('freePage', 'free');
+        if (pageId === 'animePage') renderSubPage('animePage', 'anime');
+        if (pageId === 'varietyPage') renderSubPage('varietyPage', 'variety');
+        if (pageId === 'nightPage') renderSubPage('nightPage', 'night');
+        if (pageId === 'eventPage') renderEventPage();
+    }
+
+    // 顶部分类点击
+    document.querySelectorAll('.top-cat').forEach(cat => {
+        cat.addEventListener('click', () => {
+            const catVal = cat.getAttribute('data-cat');
+            document.querySelectorAll('.top-cat').forEach(c => c.classList.remove('active'));
+            cat.classList.add('active');
+            if (catVal === 'free') switchTo('freePage');
+            else if (catVal === 'anime') switchTo('animePage');
+            else if (catVal === 'variety') switchTo('varietyPage');
+            else if (catVal === 'night') switchTo('nightPage');
+            else if (catVal === 'event') switchTo('eventPage');
+        });
+    });
+
+    // 点击Logo返回首页
+    document.getElementById('logoBtn').addEventListener('click', () => {
+        document.querySelectorAll('.top-cat').forEach(c => c.classList.remove('active'));
+        switchTo('homePage');
+    });
+
+    // 底部导航
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const pageId = item.getAttribute('data-page');
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+            if (pageId === 'homePage') switchTo('homePage');
+            if (pageId === 'following') loadFollowing();
+            if (pageId === 'profile') switchTo('profile');
+        });
+    });
+
+    function loadFollowing() {
+        const list = JSON.parse(localStorage.getItem('following')) || [];
+        document.getElementById('followingList').innerHTML = list.length ? list.map(name => `<div style="background:#1f1f1f; padding:12px; border-radius:12px; margin-bottom:8px;">📺 ${name}</div>`).join('') : '<div style="background:#1f1f1f; padding:16px; border-radius:12px;">暂无追剧，去首页点击“追剧”按钮添加～</div>';
+    }
+
+    // 初始化
+    renderHome();
+    renderSubPage('freePage', 'free');
+    renderSubPage('animePage', 'anime');
+    renderSubPage('varietyPage', 'variety');
+    renderSubPage('nightPage', 'night');
+    renderEventPage();
+</script>
+</body>
+</html>
