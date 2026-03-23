@@ -7,6 +7,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
+        .search-input-field {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 20px;
+            padding: 6px 12px;
+            padding-left: 32px;
+            font-size: 14px;
+            color: white;
+            width: 140px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='18' height='18' fill='none' stroke='%23ccc' stroke-width='2'%3E%3Ccircle cx='10' cy='10' r='7'/%3E%3Cline x1='15' y1='15' x2='21' y2='21'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 10px center;
+            background-size: 16px;
+        }
+
+        .search-input-field:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+
         .search-container {
             position: relative;
             display: inline-block;
@@ -35,15 +55,6 @@
 
         #downloadBtn {
             gap: 2px;
-        }
-
-        .icon-svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .icon-btn span {
-            font-size: 12px;
         }
 
         * {
@@ -220,6 +231,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             transition: transform 0.2s;
             cursor: pointer;
+            position: relative;
         }
 
         .card:hover {
@@ -238,6 +250,28 @@
             margin: 8px 10px 12px;
             color: #f0f0f0;
             line-height: 1.3;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 10px 10px;
+            gap: 8px;
+        }
+
+        .card-actions button {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-actions button:hover {
+            color: #ff8c42;
         }
 
         .event-box {
@@ -309,6 +343,75 @@
             display: block;
         }
 
+        .theater-tabs {
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 16px;
+        }
+
+        .theater-tab {
+            font-size: 16px;
+            padding: 8px 0;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .theater-tab.active {
+            color: #4caf50;
+            border-bottom: 2px solid #4caf50;
+        }
+
+        .list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .list-item {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            justify-content: space-between;
+        }
+
+        .list-item img {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .list-item-info {
+            flex: 1;
+        }
+
+        .list-item-info h4 {
+            margin-bottom: 4px;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .delete-btn:hover {
+            color: #e67e22;
+        }
+
         .swiper-button-next,
         .swiper-button-prev {
             width: 80px;
@@ -369,6 +472,8 @@
                     </svg>
                     搜索
                 </button>
+                <input type="text" id="searchInputField" class="search-input-field" placeholder="搜索任意内容"
+                    style="display: none;">
             </div>
             <button class="lang-btn" id="downloadBtn" onclick="alert('下载功能开发中，后续将提供APP下载链接')">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -419,11 +524,15 @@
     <div id="nightPage" class="page"></div>
     <div id="eventPage" class="page"></div>
 
-    <!-- 追剧页面 -->
+    <!-- 剧场页面 -->
     <div id="following" class="page">
         <div style="padding: 16px;">
-            <h2>剧场</h2>
-            <div id="followingList"></div>
+            <div class="theater-tabs">
+                <div class="theater-tab active" data-tab="history">播放记录</div>
+                <div class="theater-tab" data-tab="favorites">我的收藏</div>
+            </div>
+            <div id="historyList" class="list-container"></div>
+            <div id="favoritesList" class="list-container" style="display: none;"></div>
         </div>
     </div>
 
@@ -438,11 +547,11 @@
                     </div>
                     <div>
                         <div style="color:#aaa;">收藏</div>
-                        <div style="font-size:24px;">6</div>
+                        <div style="font-size:24px;">0</div>
                     </div>
                     <div>
                         <div style="color:#aaa;">播放记录</div>
-                        <div style="font-size:24px;">12</div>
+                        <div style="font-size:24px;">0</div>
                     </div>
                 </div>
             </div>
@@ -480,6 +589,7 @@
             let items = [];
             for (let i = 1; i <= count; i++) {
                 items.push({
+                    id: `${prefix}${i}`,
                     name: `${prefix}${i}`,
                     img: `https://picsum.photos/300/180?random=${Math.random()}`,
                     rating: (7 + Math.random() * 2).toFixed(1)
@@ -527,6 +637,113 @@
             night: ["https://picsum.photos/800/530?random=109", "https://picsum.photos/800/530?random=110", "https://picsum.photos/800/530?random=111"]
         };
 
+        // 数据存储
+        let watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+
+        function saveHistory() {
+            localStorage.setItem('watchHistory', JSON.stringify(watchHistory));
+            updateProfileCounts();
+        }
+
+        function saveFavorites() {
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateProfileCounts();
+        }
+
+        function updateProfileCounts() {
+            const favCount = document.getElementById('favCount');
+            const historyCount = document.getElementById('historyCount');
+            if (favCount) favCount.innerText = favorites.length;
+            if (historyCount) historyCount.innerText = watchHistory.length;
+        }
+
+        function addToHistory(item) {
+            if (!watchHistory.find(h => h.id === item.id)) {
+                watchHistory.unshift(item);
+                if (watchHistory.length > 50) watchHistory.pop();
+                saveHistory();
+                renderHistoryList();
+            }
+        }
+
+        function addToFavorite(item) {
+            if (!favorites.find(f => f.id === item.id)) {
+                favorites.unshift(item);
+                saveFavorites();
+                renderFavoritesList();
+            }
+        }
+
+        function removeFromFavorite(id) {
+            favorites = favorites.filter(f => f.id !== id);
+            saveFavorites();
+            renderFavoritesList();
+        }
+
+        function removeFromHistory(id) {
+            watchHistory = watchHistory.filter(h => h.id !== id);
+            saveHistory();
+            renderHistoryList();
+        }
+
+        function renderHistoryList() {
+            const container = document.getElementById('historyList');
+            if (!container) return;
+            if (watchHistory.length === 0) {
+                container.innerHTML = '<div class="empty-msg">暂无观看记录</div>';
+                return;
+            }
+            container.innerHTML = watchHistory.slice(0, 3).map(item => `
+                <div class="list-item">
+                    <img src="${item.img}" onclick="alert('播放《${item.name}》')">
+                    <div class="list-item-info" onclick="alert('播放《${item.name}》')">
+                        <h4>${item.name}</h4>
+                        <p>上次观看</p>
+                    </div>
+                    <button class="delete-btn" onclick="event.stopPropagation(); removeFromHistory('${item.id}')">删除</button>
+                </div>
+            `).join('') + (watchHistory.length > 3 ? '<div class="more-link" style="text-align:center; margin-top:12px;" onclick="alert(\'查看全部播放记录\')">更多 →</div>' : '');
+        }
+
+        function renderFavoritesList() {
+            const container = document.getElementById('favoritesList');
+            if (!container) return;
+            if (favorites.length === 0) {
+                container.innerHTML = '<div class="empty-msg">暂无收藏</div>';
+                return;
+            }
+            container.innerHTML = favorites.slice(0, 3).map(item => `
+                <div class="list-item">
+                    <img src="${item.img}" onclick="alert('播放《${item.name}》')">
+                    <div class="list-item-info" onclick="alert('播放《${item.name}》')">
+                        <h4>${item.name}</h4>
+                        <p>已收藏</p>
+                    </div>
+                    <button class="delete-btn" onclick="event.stopPropagation(); removeFromFavorite('${item.id}')">取消收藏</button>
+                </div>
+            `).join('') + (favorites.length > 3 ? '<div class="more-link" style="text-align:center; margin-top:12px;" onclick="alert(\'查看全部收藏\')">更多 →</div>' : '');
+        }
+
+        function initTheaterTabs() {
+            const tabs = document.querySelectorAll('.theater-tab');
+            const historyDiv = document.getElementById('historyList');
+            const favDiv = document.getElementById('favoritesList');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    if (tab.dataset.tab === 'history') {
+                        historyDiv.style.display = 'flex';
+                        favDiv.style.display = 'none';
+                    } else {
+                        historyDiv.style.display = 'none';
+                        favDiv.style.display = 'flex';
+                    }
+                });
+            });
+        }
+
         // 初始化轮播图
         function initSwiper(containerId, wrapperId, images) {
             const wrapper = document.getElementById(wrapperId);
@@ -568,11 +785,38 @@
             categories.forEach(cat => {
                 const listContainer = document.getElementById(`cat-${cat.key}`);
                 listContainer.innerHTML = cat.items.map(item => `
-                <div class="card" onclick="alert('《${item.name}》播放地址待配置')">
+                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
                     <img src="${item.img}">
                     <h4>${item.name}</h4>
+                    <div class="card-actions">
+                        <button class="fav-btn" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">🤍 收藏</button>
+                    </div>
                 </div>
             `).join('');
+                // 绑定收藏按钮事件
+                listContainer.querySelectorAll('.fav-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const id = btn.dataset.id;
+                        const name = btn.dataset.name;
+                        const img = btn.dataset.img;
+                        const item = { id, name, img };
+                        addToFavorite(item);
+                        renderFavoritesList();
+                        btn.innerText = favorites.find(f => f.id === id) ? '❤️ 已收藏' : '🤍 收藏';
+                    });
+                });
+                // 点击卡片记录观看历史
+                listContainer.querySelectorAll('.card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const id = card.dataset.id;
+                        const name = card.dataset.name;
+                        const img = card.dataset.img;
+                        const item = { id, name, img };
+                        addToHistory(item);
+                        renderHistoryList();
+                    });
+                });
             });
         }
 
@@ -604,11 +848,36 @@
             subCats.forEach(sub => {
                 const listContainer = document.getElementById(`subcat-${pageId}-${sub.name.replace(/ /g, '')}`);
                 listContainer.innerHTML = sub.items.map(item => `
-                <div class="card" onclick="alert('《${item.name}》播放地址待配置')">
+                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
                     <img src="${item.img}">
                     <h4>${item.name}</h4>
+                    <div class="card-actions">
+                        <button class="fav-btn" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">🤍 收藏</button>
+                    </div>
                 </div>
             `).join('');
+                listContainer.querySelectorAll('.fav-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const id = btn.dataset.id;
+                        const name = btn.dataset.name;
+                        const img = btn.dataset.img;
+                        const item = { id, name, img };
+                        addToFavorite(item);
+                        renderFavoritesList();
+                        btn.innerText = favorites.find(f => f.id === id) ? '❤️ 已收藏' : '🤍 收藏';
+                    });
+                });
+                listContainer.querySelectorAll('.card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const id = card.dataset.id;
+                        const name = card.dataset.name;
+                        const img = card.dataset.img;
+                        const item = { id, name, img };
+                        addToHistory(item);
+                        renderHistoryList();
+                    });
+                });
             });
         }
 
@@ -647,7 +916,37 @@
             if (pageId === 'varietyPage') renderSubPage('varietyPage', 'variety');
             if (pageId === 'nightPage') renderSubPage('nightPage', 'night');
             if (pageId === 'eventPage') renderEventPage();
+            if (pageId === 'following') {
+                renderHistoryList();
+                renderFavoritesList();
+            }
         }
+
+        // 搜索功能
+        const searchBtn = document.getElementById('searchBtn');
+        const searchInput = document.getElementById('searchInputField');
+
+        searchBtn.addEventListener('click', () => {
+            searchBtn.style.display = 'none';
+            searchInput.style.display = 'inline-block';
+            searchInput.focus();
+        });
+
+        searchInput.addEventListener('blur', () => {
+            searchInput.style.display = 'none';
+            searchBtn.style.display = 'inline-flex';
+            searchInput.value = '';
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const keyword = searchInput.value;
+                console.log('搜索关键词：', keyword);
+                searchInput.style.display = 'none';
+                searchBtn.style.display = 'inline-flex';
+                searchInput.value = '';
+            }
+        });
 
         // 滚动时给头部加样式
         window.addEventListener('scroll', function () {
@@ -686,15 +985,21 @@
                 document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 item.classList.add('active');
                 if (pageId === 'homePage') switchTo('homePage');
-                if (pageId === 'following') loadFollowing();
+                if (pageId === 'following') switchTo('following');
                 if (pageId === 'profile') switchTo('profile');
             });
         });
 
-        function loadFollowing() {
-            const list = JSON.parse(localStorage.getItem('following')) || [];
-            document.getElementById('followingList').innerHTML = list.length ? list.map(name => `<div style="background:#1f1f1f; padding:12px; border-radius:12px; margin-bottom:8px;">📺 ${name}</div>`).join('') : '<div style="background:#1f1f1f; padding:16px; border-radius:12px;">暂无追剧，去首页点击“追剧”按钮添加～</div>';
-        }
+        // 右上角按钮
+        document.querySelectorAll('.right-area .lang-btn[data-page]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const pageId = btn.getAttribute('data-page');
+                if (pageId === 'following') switchTo('following');
+            });
+        });
+        document.getElementById('avatarBtn').addEventListener('click', () => {
+            switchTo('profile');
+        });
 
         // 初始化
         renderHome();
@@ -703,6 +1008,10 @@
         renderSubPage('varietyPage', 'variety');
         renderSubPage('nightPage', 'night');
         renderEventPage();
+        initTheaterTabs();
+        renderHistoryList();
+        renderFavoritesList();
+        updateProfileCounts();
     </script>
 </body>
 
