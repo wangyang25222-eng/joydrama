@@ -847,7 +847,15 @@
             <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
                 <img src="${item.img}">
                 <div class="card-hover-icons">
-                   <div class="play-icon" onclick="event.stopPropagation(); addToHistory({id:'${item.id}', name:'${item.name}', img:'${item.img}'}); alert('播放《${item.name}》')">
+                   <div class="play-icon" onclick="event.stopPropagation(); 
+                    let history = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+                    history = history.filter(h => h.id !== '${item.id}');
+                    history.unshift({id:'${item.id}', name:'${item.name}', img:'${item.img}'});
+                    if (history.length > 50) history.pop();
+                    localStorage.setItem('watchHistory', JSON.stringify(history));
+                    renderHistoryGrid();
+                    alert('播放《${item.name}》');
+                ">
                         <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
                             <polygon points="5 3 19 12 5 21 5 3" />
                         </svg>
@@ -881,7 +889,6 @@
             container.innerHTML = itemsToShow.map(item => renderCard(item, false)).join('');
 
             if (end >= watchHistory.length) {
-                // 已全部显示，显示“收起”
                 moreBtn.style.display = 'block';
                 moreBtn.innerHTML = '<span>收起 <i class="arrow-icon-up"></i></span>';
                 moreBtn.onclick = () => {
@@ -889,7 +896,6 @@
                     renderHistoryGrid(false);
                 };
             } else {
-                // 未全部显示，显示“更多”
                 moreBtn.style.display = 'block';
                 moreBtn.innerHTML = '<span>查看更多 <i class="arrow-icon"></i></span>';
                 moreBtn.onclick = () => {
@@ -941,31 +947,40 @@
             const container = document.getElementById(containerId);
             if (!container) return;
             container.innerHTML = categories.map(cat => `
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-title">${cat.name}</span>
-                    <span class="more-link" onclick="alert('更多${cat.name}')">更多 →</span>
-                </div>
-                <div class="scroll-x" id="cat-${cat.key}"></div>
+        <div class="section">
+            <div class="section-header">
+                <span class="section-title">${cat.name}</span>
+                <span class="more-link" onclick="alert('更多${cat.name}')">更多 →</span>
             </div>
-        `).join('');
+            <div class="scroll-x" id="cat-${cat.key}"></div>
+        </div>
+    `).join('');
             categories.forEach(cat => {
                 const listContainer = document.getElementById(`cat-${cat.key}`);
                 listContainer.innerHTML = cat.items.map(item => `
-                <div class="card-wrapper">
-                    <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
-                        <img src="${item.img}">
-                        <div class="card-hover-icons">
-                            <div class="play-icon" onclick="event.stopPropagation(); alert('播放《${item.name}》')">
-                                <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
-                                    <polygon points="5 3 19 12 5 21 5 3" />
-                                </svg>
-                            </div>
+            <div class="card-wrapper">
+                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+                    <img src="${item.img}">
+                    <div class="card-hover-icons">
+                        <div class="play-icon" onclick="event.stopPropagation(); 
+                        let history = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+                        history = history.filter(h => h.id !== '${item.id}');
+                        history.unshift({id:'${item.id}', name:'${item.name}', img:'${item.img}'});
+                        if (history.length > 50) history.pop();
+                        localStorage.setItem('watchHistory', JSON.stringify(history));
+                        renderHistoryGrid();
+                        alert('播放《${item.name}》');
+                    ">
+                            <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                            </svg>
                         </div>
                     </div>
-                    <div class="card-title">${item.name}</div>
                 </div>
-            `).join('');
+                <div class="card-title">${item.name}</div>
+            </div>
+        `).join('');
+
                 listContainer.querySelectorAll('.card').forEach(card => {
                     card.addEventListener('click', (e) => {
                         if (e.target.closest('.play-icon')) return;
@@ -1009,7 +1024,15 @@
                     <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
                         <img src="${item.img}">
                         <div class="card-hover-icons">
-                            <div class="play-icon" onclick="event.stopPropagation(); alert('播放《${item.name}》')">
+                            <div class="play-icon" onclick="event.stopPropagation(); 
+                            let history = JSON.parse(localStorage.getItem('watchHistory') || '[]');
+                            history = history.filter(h => h.id !== '${item.id}');
+                            history.unshift({id:'${item.id}', name:'${item.name}', img:'${item.img}'});
+                            if (history.length > 50) history.pop();
+                            localStorage.setItem('watchHistory', JSON.stringify(history));
+                            renderHistoryGrid();
+                            alert('播放《${item.name}》');
+                        ">
                                 <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
                                     <polygon points="5 3 19 12 5 21 5 3" />
                                 </svg>
@@ -1057,16 +1080,6 @@
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'homePage') renderHome();
-            document.body.addEventListener('click', function (e) {
-                if (e.target.classList.contains('card-title')) {
-                    const cardWrapper = e.target.closest('.card-wrapper');
-                    const card = cardWrapper.querySelector('.card');
-                    const id = card.dataset.id;
-                    const name = card.dataset.name;
-                    const img = card.dataset.img;
-                    addToHistory({ id, name, img });
-                }
-            });
             if (pageId === 'freePage') renderSubPage('freePage', 'free');
             if (pageId === 'animePage') renderSubPage('animePage', 'anime');
             if (pageId === 'varietyPage') renderSubPage('varietyPage', 'variety');
