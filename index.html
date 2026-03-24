@@ -34,23 +34,40 @@
             margin-top: 3px;
         }
 
-        .avatar-btn {
+        .avatar-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #2a2a2a;
+            border-radius: 30px;
+            padding: 4px 12px 4px 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .avatar-info:hover {
+            background: #3a3a3a;
+        }
+
+        .avatar-icon {
+            width: 32px;
+            height: 32px;
             background: #3a3a3a;
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background 0.2s;
-            border: 1px solid #555;
+            font-size: 16px;
         }
 
-        .avatar-btn:hover {
-            background: #4caf50;
-            border-color: #4caf50;
+        .avatar-text {
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .avatar-text small {
+            font-size: 10px;
+            color: #888;
         }
 
         #downloadBtn {
@@ -82,14 +99,15 @@
             justify-content: space-between;
             z-index: 20;
             transition: background 0.3s, box-shadow 0.3s;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
         .header-scrolled {
-            background: #1f1f1f;
+            background: rgba(31, 31, 31, 0.85);
+            backdrop-filter: blur(4px);
             position: fixed;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid rgba(51, 51, 51, 0.5);
         }
 
         .logo {
@@ -223,8 +241,15 @@
             display: none;
         }
 
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
         .card {
-            flex: 0 0 220px;
+            flex: 0 0 auto;
             background: #1f1f1f;
             border-radius: 12px;
             overflow: hidden;
@@ -232,6 +257,7 @@
             transition: transform 0.2s;
             cursor: pointer;
             position: relative;
+            width: 220px;
         }
 
         .card:hover {
@@ -244,34 +270,176 @@
             object-fit: cover;
         }
 
-        .card h4 {
+        .card-title {
             font-size: 14px;
-            font-weight: 600;
-            margin: 8px 10px 12px;
+            font-weight: 500;
             color: #f0f0f0;
-            line-height: 1.3;
-        }
-
-        .card-actions {
-            display: flex;
-            justify-content: space-between;
-            padding: 4px 10px 10px;
-            gap: 8px;
-        }
-
-        .card-actions button {
-            background: none;
-            border: none;
-            color: #ccc;
-            font-size: 12px;
+            text-align: center;
             cursor: pointer;
+        }
+
+        .card-hover-icons {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
-            gap: 4px;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
-        .card-actions button:hover {
-            color: #ff8c42;
+        .card:hover .card-hover-icons {
+            opacity: 1;
+        }
+
+        .play-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .play-icon svg {
+            width: 28px;
+            height: 28px;
+            margin-left: 3px;
+        }
+
+        .play-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .theater-section {
+            margin-bottom: -35px;
+        }
+
+        .theater-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding-top: 50px;
+            padding-left: 40px;
+        }
+
+        .theater-title:hover svg {
+            stroke: #4caf50;
+            opacity: 0.8;
+        }
+
+        .theater-title:hover {
+            color: #4caf50;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .more-btn {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .more-btn span {
+            background: #2a2a2a;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0px;
+        }
+
+        .more-btn span .arrow-icon-up {
+            margin-left: 4px;
+            position: relative;
+            top: 1px;
+        }
+
+        .more-btn span:hover {
+            background: #4caf50;
+        }
+
+        .arrow-icon {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid white;
+            border-right: 2px solid white;
+            transform: rotate(45deg);
+            transition: transform 0.2s;
+        }
+
+        .more-btn span:hover .arrow-icon {
+            transform: rotate(45deg);
+        }
+
+        .arrow-icon-up {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-top: 2px solid white;
+            border-right: 2px solid white;
+            transform: rotate(-45deg);
+            transition: transform 0.2s;
+        }
+
+        .more-btn span:hover .arrow-icon-up {
+            transform: rotate(-45deg);
+        }
+
+        .profile-header {
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 32px;
+        }
+
+        .profile-stats .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .profile-stats .label {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .login-btn {
+            background: #4caf50;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .login-btn:hover {
+            background: #3e8e41;
         }
 
         .event-box {
@@ -317,6 +485,15 @@
             .bottom-nav {
                 display: flex;
             }
+
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 12px;
+            }
+
+            .card {
+                width: 100%;
+            }
         }
 
         .nav-item {
@@ -341,75 +518,6 @@
 
         .page.active {
             display: block;
-        }
-
-        .theater-tabs {
-            display: flex;
-            gap: 24px;
-            border-bottom: 1px solid #333;
-            margin-bottom: 16px;
-        }
-
-        .theater-tab {
-            font-size: 16px;
-            padding: 8px 0;
-            cursor: pointer;
-            color: #aaa;
-        }
-
-        .theater-tab.active {
-            color: #4caf50;
-            border-bottom: 2px solid #4caf50;
-        }
-
-        .list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .list-item {
-            background: #2a2a2a;
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            justify-content: space-between;
-        }
-
-        .list-item img {
-            width: 60px;
-            height: 90px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .list-item-info {
-            flex: 1;
-        }
-
-        .list-item-info h4 {
-            margin-bottom: 4px;
-        }
-
-        .empty-msg {
-            text-align: center;
-            padding: 40px;
-            color: #aaa;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: #aaa;
-            cursor: pointer;
-            font-size: 12px;
-        }
-
-        .delete-btn:hover {
-            color: #e67e22;
         }
 
         .swiper-button-next,
@@ -443,6 +551,33 @@
             font-size: 40px;
             font-weight: bold;
             color: white;
+        }
+
+        .empty-msg {
+            text-align: center;
+            padding: 40px;
+            color: #aaa;
+        }
+
+        .card .delete-icon {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            font-size: 18px;
+            color: white;
+            text-shadow: 0 0 2px black;
+            opacity: 0;
+            transition: opacity 0.2s;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .card:hover .delete-icon {
+            opacity: 1;
+        }
+
+        .card .delete-icon:hover {
+            color: #e67e22;
         }
     </style>
 </head>
@@ -497,16 +632,16 @@
                 </svg>
                 简体中文
             </button>
-            <button class="avatar-btn" id="avatarBtn">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2">
-                    <path
-                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                </svg>
-            </button>
+            <div class="avatar-info" id="avatarBtn">
+                <div class="avatar-icon">👤</div>
+                <div class="avatar-text">
+                    UID689521008<br>
+                    <small>游客</small>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- 首页内容 -->
     <div id="homePage" class="page active">
         <div id="homeSwiper" class="swiper">
             <div class="swiper-wrapper" id="homeSwiperWrapper"></div>
@@ -517,43 +652,63 @@
         <div id="homeContent"></div>
     </div>
 
-    <!-- 其他分类内容容器 -->
     <div id="freePage" class="page"></div>
     <div id="animePage" class="page"></div>
     <div id="varietyPage" class="page"></div>
     <div id="nightPage" class="page"></div>
     <div id="eventPage" class="page"></div>
 
-    <!-- 剧场页面 -->
     <div id="following" class="page">
-        <div style="padding: 16px;">
-            <div class="theater-tabs">
-                <div class="theater-tab active" data-tab="history">播放记录</div>
-                <div class="theater-tab" data-tab="favorites">我的收藏</div>
+        <div style="padding: 16px 0;">
+            <div class="theater-section">
+                <div class="theater-title">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="display: inline-block; margin-right: 4px; transform: translateY(5px);">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    播放记录
+                </div>
+                <div id="historyGrid" class="grid-container"></div>
+                <div id="historyMore" class="more-btn" style="display: none;">
+                    <span>更多 →</span>
+                </div>
             </div>
-            <div id="historyList" class="list-container"></div>
-            <div id="favoritesList" class="list-container" style="display: none;"></div>
+            <div class="theater-section">
+                <div class="theater-title">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"
+                        style="display: inline-block; margin-right: 0px; transform: translateY(5px);">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.07 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                    我的收藏
+                </div>
+                <div id="favoritesGrid" class="grid-container"></div>
+                <div id="favoritesMore" class="more-btn" style="display: none;">
+                    <span>更多 →</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- 我的页面 -->
     <div id="profile" class="page">
         <div style="padding: 16px;">
-            <div style="background: #1f1f1f; border-radius: 16px; padding: 20px; margin-bottom: 16px;">
-                <div style="display: flex; justify-content: space-between;">
+            <div class="profile-header">
+                <div class="profile-stats">
                     <div>
-                        <div style="color:#aaa;">积分</div>
-                        <div style="font-size:24px;">1280</div>
+                        <div class="value" id="favCount">0</div>
+                        <div class="label">收藏</div>
                     </div>
                     <div>
-                        <div style="color:#aaa;">收藏</div>
-                        <div style="font-size:24px;">0</div>
+                        <div class="value" id="historyCount">0</div>
+                        <div class="label">播放记录</div>
                     </div>
                     <div>
-                        <div style="color:#aaa;">播放记录</div>
-                        <div style="font-size:24px;">0</div>
+                        <div class="value">1280</div>
+                        <div class="label">积分</div>
                     </div>
                 </div>
+                <button class="login-btn" onclick="alert('登录/注册功能开发中')">登录 / 注册</button>
             </div>
             <div style="background: #1f1f1f; border-radius: 16px; padding: 16px;">
                 <div style="display: flex; flex-wrap: wrap; gap: 12px;">
@@ -584,7 +739,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
-        // 生成15部影片
         function generateItems(prefix, count = 15) {
             let items = [];
             for (let i = 1; i <= count; i++) {
@@ -598,7 +752,6 @@
             return items;
         }
 
-        // 首页分类
         const homeCategories = [
             { name: "热门榜单", key: "hot", items: generateItems("热剧", 15) },
             { name: "豪门霸总", key: "boss", items: generateItems("豪门", 15) },
@@ -608,7 +761,6 @@
             { name: "悬疑惊悚", key: "suspense", items: generateItems("悬疑", 15) }
         ];
 
-        // 子分类
         const subCategories = {
             free: [
                 { name: "全集短剧", items: generateItems("免费短剧", 15) },
@@ -628,7 +780,6 @@
             ]
         };
 
-        // 轮播图
         const banners = {
             home: ["https://picsum.photos/800/530?random=100", "https://picsum.photos/800/530?random=101", "https://picsum.photos/800/530?random=102"],
             free: ["https://picsum.photos/800/530?random=100", "https://picsum.photos/800/530?random=101", "https://picsum.photos/800/530?random=102"],
@@ -637,18 +788,19 @@
             night: ["https://picsum.photos/800/530?random=109", "https://picsum.photos/800/530?random=110", "https://picsum.photos/800/530?random=111"]
         };
 
-        // 数据存储
         let watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
         let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
 
         function saveHistory() {
             localStorage.setItem('watchHistory', JSON.stringify(watchHistory));
             updateProfileCounts();
+            renderHistoryGrid();
         }
 
         function saveFavorites() {
             localStorage.setItem('favorites', JSON.stringify(favorites));
             updateProfileCounts();
+            renderFavoritesGrid();
         }
 
         function updateProfileCounts() {
@@ -663,7 +815,12 @@
                 watchHistory.unshift(item);
                 if (watchHistory.length > 50) watchHistory.pop();
                 saveHistory();
-                renderHistoryList();
+                renderHistoryGrid();
+            } else {
+                watchHistory = watchHistory.filter(h => h.id !== item.id);
+                watchHistory.unshift(item);
+                saveHistory();
+                renderHistoryGrid();
             }
         }
 
@@ -671,105 +828,115 @@
             if (!favorites.find(f => f.id === item.id)) {
                 favorites.unshift(item);
                 saveFavorites();
-                renderFavoritesList();
             }
         }
 
         function removeFromFavorite(id) {
             favorites = favorites.filter(f => f.id !== id);
             saveFavorites();
-            renderFavoritesList();
         }
 
         function removeFromHistory(id) {
             watchHistory = watchHistory.filter(h => h.id !== id);
             saveHistory();
-            renderHistoryList();
         }
 
-        function renderHistoryList() {
-            const container = document.getElementById('historyList');
+        function renderCard(item, isFavorite = false) {
+            return `
+        <div class="card-wrapper">
+            <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+                <img src="${item.img}">
+                <div class="card-hover-icons">
+                   <div class="play-icon" onclick="event.stopPropagation(); addToHistory({id:'${item.id}', name:'${item.name}', img:'${item.img}'}); alert('播放《${item.name}》')">
+                        <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
+                            <polygon points="5 3 19 12 5 21 5 3" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="delete-icon" onclick="event.stopPropagation(); ${isFavorite ? `removeFromFavorite('${item.id}')` : `removeFromHistory('${item.id}')`}; this.closest('.card-wrapper').remove();">✕</div>
+            </div>
+            <div class="card-title" id="title-${item.id}">${item.name}</div>
+        </div>
+    `;
+        }
+
+        let historyPage = 1;
+        const PAGE_SIZE = 6;
+
+        function renderHistoryGrid(loadMore = false) {
+            const container = document.getElementById('historyGrid');
+            const moreBtn = document.getElementById('historyMore');
             if (!container) return;
             if (watchHistory.length === 0) {
                 container.innerHTML = '<div class="empty-msg">暂无观看记录</div>';
+                moreBtn.style.display = 'none';
                 return;
             }
-            container.innerHTML = watchHistory.slice(0, 3).map(item => `
-                <div class="list-item">
-                    <img src="${item.img}" onclick="alert('播放《${item.name}》')">
-                    <div class="list-item-info" onclick="alert('播放《${item.name}》')">
-                        <h4>${item.name}</h4>
-                        <p>上次观看</p>
-                    </div>
-                    <button class="delete-btn" onclick="event.stopPropagation(); removeFromHistory('${item.id}')">删除</button>
-                </div>
-            `).join('') + (watchHistory.length > 3 ? '<div class="more-link" style="text-align:center; margin-top:12px;" onclick="alert(\'查看全部播放记录\')">更多 →</div>' : '');
+            if (!loadMore) {
+                historyPage = 1;
+                container.innerHTML = '';
+            }
+            const end = historyPage * PAGE_SIZE;
+            const itemsToShow = watchHistory.slice(0, end);
+            container.innerHTML = itemsToShow.map(item => renderCard(item, false)).join('');
+
+            if (end >= watchHistory.length) {
+                // 已全部显示，显示“收起”
+                moreBtn.style.display = 'block';
+                moreBtn.innerHTML = '<span>收起 <i class="arrow-icon-up"></i></span>';
+                moreBtn.onclick = () => {
+                    historyPage = 1;
+                    renderHistoryGrid(false);
+                };
+            } else {
+                // 未全部显示，显示“更多”
+                moreBtn.style.display = 'block';
+                moreBtn.innerHTML = '<span>查看更多 <i class="arrow-icon"></i></span>';
+                moreBtn.onclick = () => {
+                    historyPage++;
+                    renderHistoryGrid(true);
+                };
+            }
         }
 
-        function renderFavoritesList() {
-            const container = document.getElementById('favoritesList');
+        function renderFavoritesGrid() {
+            const container = document.getElementById('favoritesGrid');
+            const moreBtn = document.getElementById('favoritesMore');
             if (!container) return;
             if (favorites.length === 0) {
                 container.innerHTML = '<div class="empty-msg">暂无收藏</div>';
+                moreBtn.style.display = 'none';
                 return;
             }
-            container.innerHTML = favorites.slice(0, 3).map(item => `
-                <div class="list-item">
-                    <img src="${item.img}" onclick="alert('播放《${item.name}》')">
-                    <div class="list-item-info" onclick="alert('播放《${item.name}》')">
-                        <h4>${item.name}</h4>
-                        <p>已收藏</p>
-                    </div>
-                    <button class="delete-btn" onclick="event.stopPropagation(); removeFromFavorite('${item.id}')">取消收藏</button>
-                </div>
-            `).join('') + (favorites.length > 3 ? '<div class="more-link" style="text-align:center; margin-top:12px;" onclick="alert(\'查看全部收藏\')">更多 →</div>' : '');
+            const displayItems = favorites.slice(0, 6);
+            container.innerHTML = displayItems.map(item => renderCard(item, true)).join('');
+            moreBtn.style.display = favorites.length > 6 ? 'block' : 'none';
         }
 
-        function initTheaterTabs() {
-            const tabs = document.querySelectorAll('.theater-tab');
-            const historyDiv = document.getElementById('historyList');
-            const favDiv = document.getElementById('favoritesList');
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    tabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    if (tab.dataset.tab === 'history') {
-                        historyDiv.style.display = 'flex';
-                        favDiv.style.display = 'none';
-                    } else {
-                        historyDiv.style.display = 'none';
-                        favDiv.style.display = 'flex';
-                    }
-                });
-            });
-        }
-
-        // 初始化轮播图
         function initSwiper(containerId, wrapperId, images) {
             const wrapper = document.getElementById(wrapperId);
             if (!wrapper) return;
             wrapper.innerHTML = images.map(img => `<div class="swiper-slide"><img src="${img}"></div>`).join('');
-            setTimeout(() => {
-                new Swiper(`#${containerId}`, {
-                    loop: true,
-                    autoplay: {
-                        delay: 3000,
-                        disableOnInteraction: false,
-                    },
-                    speed: 400,
-                    spaceBetween: 0,
-                    slidesPerView: 1,
-                    grabCursor: true,
-                    pagination: { el: `#${containerId} .swiper-pagination`, clickable: true },
-                    navigation: {
-                        nextEl: `#${containerId} .swiper-button-next`,
-                        prevEl: `#${containerId} .swiper-button-prev`,
-                    }
-                });
-            }, 50);
+            if (window.swipers && window.swipers[containerId]) {
+                window.swipers[containerId].destroy(true, true);
+            }
+            const swiper = new Swiper(`#${containerId}`, {
+                loop: true,
+                autoplay: { delay: 3000, disableOnInteraction: false },
+                speed: 400,
+                spaceBetween: 0,
+                slidesPerView: 1,
+                grabCursor: true,
+                pagination: { el: `#${containerId} .swiper-pagination`, clickable: true },
+                navigation: {
+                    nextEl: `#${containerId} .swiper-button-next`,
+                    prevEl: `#${containerId} .swiper-button-prev`,
+                }
+            });
+            if (!window.swipers) window.swipers = {};
+            window.swipers[containerId] = swiper;
         }
 
-        // 渲染分类
         function renderCategories(containerId, categories) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -785,42 +952,32 @@
             categories.forEach(cat => {
                 const listContainer = document.getElementById(`cat-${cat.key}`);
                 listContainer.innerHTML = cat.items.map(item => `
-                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
-                    <img src="${item.img}">
-                    <h4>${item.name}</h4>
-                    <div class="card-actions">
-                        <button class="fav-btn" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">🤍 收藏</button>
+                <div class="card-wrapper">
+                    <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+                        <img src="${item.img}">
+                        <div class="card-hover-icons">
+                            <div class="play-icon" onclick="event.stopPropagation(); alert('播放《${item.name}》')">
+                                <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
+                                    <polygon points="5 3 19 12 5 21 5 3" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
+                    <div class="card-title">${item.name}</div>
                 </div>
             `).join('');
-                // 绑定收藏按钮事件
-                listContainer.querySelectorAll('.fav-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const id = btn.dataset.id;
-                        const name = btn.dataset.name;
-                        const img = btn.dataset.img;
-                        const item = { id, name, img };
-                        addToFavorite(item);
-                        renderFavoritesList();
-                        btn.innerText = favorites.find(f => f.id === id) ? '❤️ 已收藏' : '🤍 收藏';
-                    });
-                });
-                // 点击卡片记录观看历史
                 listContainer.querySelectorAll('.card').forEach(card => {
-                    card.addEventListener('click', () => {
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('.play-icon')) return;
                         const id = card.dataset.id;
                         const name = card.dataset.name;
                         const img = card.dataset.img;
-                        const item = { id, name, img };
-                        addToHistory(item);
-                        renderHistoryList();
+                        addToHistory({ id, name, img });
                     });
                 });
             });
         }
 
-        // 渲染子分类页面（免费、动漫等）
         function renderSubPage(pageId, catKey) {
             const container = document.getElementById(pageId);
             if (!container) return;
@@ -848,44 +1005,36 @@
             subCats.forEach(sub => {
                 const listContainer = document.getElementById(`subcat-${pageId}-${sub.name.replace(/ /g, '')}`);
                 listContainer.innerHTML = sub.items.map(item => `
-                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
-                    <img src="${item.img}">
-                    <h4>${item.name}</h4>
-                    <div class="card-actions">
-                        <button class="fav-btn" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">🤍 收藏</button>
+                <div class="card-wrapper">
+                    <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+                        <img src="${item.img}">
+                        <div class="card-hover-icons">
+                            <div class="play-icon" onclick="event.stopPropagation(); alert('播放《${item.name}》')">
+                                <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
+                                    <polygon points="5 3 19 12 5 21 5 3" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
+                    <div class="card-title">${item.name}</div>
                 </div>
             `).join('');
-                listContainer.querySelectorAll('.fav-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const id = btn.dataset.id;
-                        const name = btn.dataset.name;
-                        const img = btn.dataset.img;
-                        const item = { id, name, img };
-                        addToFavorite(item);
-                        renderFavoritesList();
-                        btn.innerText = favorites.find(f => f.id === id) ? '❤️ 已收藏' : '🤍 收藏';
-                    });
-                });
                 listContainer.querySelectorAll('.card').forEach(card => {
-                    card.addEventListener('click', () => {
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('.play-icon')) return;
                         const id = card.dataset.id;
                         const name = card.dataset.name;
                         const img = card.dataset.img;
-                        const item = { id, name, img };
-                        addToHistory(item);
-                        renderHistoryList();
+                        addToHistory({ id, name, img });
                     });
                 });
             });
         }
 
-        // 渲染活动页面
         function renderEventPage() {
             const container = document.getElementById('eventPage');
             container.innerHTML = `
-            <div class="event-box">
+            <div class="event-box" style="padding-top: 70px;">
                 <div class="event-card" onclick="alert('每日任务：签到领积分')">
                     <img src="https://picsum.photos/800/400?random=200">
                     <h3>📅 每日任务</h3>
@@ -898,31 +1047,37 @@
         `;
         }
 
-        // 渲染首页
         function renderHome() {
             initSwiper('homeSwiper', 'homeSwiperWrapper', banners.home);
             renderCategories('homeContent', homeCategories);
         }
 
-        // 页面切换
         let currentPage = 'homePage';
         function switchTo(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            currentPage = pageId;
             if (pageId === 'homePage') renderHome();
+            document.body.addEventListener('click', function (e) {
+                if (e.target.classList.contains('card-title')) {
+                    const cardWrapper = e.target.closest('.card-wrapper');
+                    const card = cardWrapper.querySelector('.card');
+                    const id = card.dataset.id;
+                    const name = card.dataset.name;
+                    const img = card.dataset.img;
+                    addToHistory({ id, name, img });
+                }
+            });
             if (pageId === 'freePage') renderSubPage('freePage', 'free');
             if (pageId === 'animePage') renderSubPage('animePage', 'anime');
             if (pageId === 'varietyPage') renderSubPage('varietyPage', 'variety');
             if (pageId === 'nightPage') renderSubPage('nightPage', 'night');
             if (pageId === 'eventPage') renderEventPage();
             if (pageId === 'following') {
-                renderHistoryList();
-                renderFavoritesList();
+                renderHistoryGrid();
+                renderFavoritesGrid();
             }
         }
 
-        // 搜索功能
         const searchBtn = document.getElementById('searchBtn');
         const searchInput = document.getElementById('searchInputField');
 
@@ -948,7 +1103,6 @@
             }
         });
 
-        // 滚动时给头部加样式
         window.addEventListener('scroll', function () {
             const header = document.getElementById('mainHeader');
             if (window.scrollY > 0) {
@@ -958,7 +1112,6 @@
             }
         });
 
-        // 顶部分类点击
         document.querySelectorAll('.top-cat').forEach(cat => {
             cat.addEventListener('click', () => {
                 const catVal = cat.getAttribute('data-cat');
@@ -972,13 +1125,11 @@
             });
         });
 
-        // 点击Logo返回首页
         document.getElementById('logoBtn').addEventListener('click', () => {
             document.querySelectorAll('.top-cat').forEach(c => c.classList.remove('active'));
             switchTo('homePage');
         });
 
-        // 底部导航
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 const pageId = item.getAttribute('data-page');
@@ -990,7 +1141,6 @@
             });
         });
 
-        // 右上角按钮
         document.querySelectorAll('.right-area .lang-btn[data-page]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const pageId = btn.getAttribute('data-page');
@@ -1001,16 +1151,15 @@
             switchTo('profile');
         });
 
-        // 初始化
         renderHome();
         renderSubPage('freePage', 'free');
         renderSubPage('animePage', 'anime');
         renderSubPage('varietyPage', 'variety');
         renderSubPage('nightPage', 'night');
         renderEventPage();
-        initTheaterTabs();
-        renderHistoryList();
-        renderFavoritesList();
+        renderHistoryGrid();
+        bindHistoryMore();
+        renderFavoritesGrid();
         updateProfileCounts();
     </script>
 </body>
