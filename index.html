@@ -1165,6 +1165,16 @@
         });
 
         renderHome();
+        document.body.addEventListener('click', function (e) {
+            if (e.target.classList.contains('card-title')) {
+                const cardWrapper = e.target.closest('.card-wrapper');
+                const card = cardWrapper.querySelector('.card');
+                const id = card.dataset.id;
+                const name = card.dataset.name;
+                const img = card.dataset.img;
+                addToHistory({ id, name, img });
+            }
+        });
         renderSubPage('freePage', 'free');
         renderSubPage('animePage', 'anime');
         renderSubPage('varietyPage', 'variety');
