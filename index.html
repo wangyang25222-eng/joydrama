@@ -7,6 +7,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <style>
+        .slide-info {
+            position: absolute;
+            bottom: 100px;
+            left: 180px;
+            max-width: 80%;
+        }
+
+        .slide-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: white;
+            text-shadow: 0 0 4px black;
+            word-wrap: break-word;
+            white-space: normal;
+            margin-left: 8px;
+        }
+
+        .slide-play-btn {
+            background: #e67e22;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: inline-block;
+            font-size: 18px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .slide-play-btn:hover {
+            transform: scale(1.05);
+            background: #f39c12;
+        }
+
+        .lang-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1f1f1f;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 8px 0;
+            z-index: 100;
+        }
+
+        .lang-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: white;
+        }
+
+        .lang-item:hover {
+            background: #4caf50;
+        }
+
+        .avatar-btn {
+            background: #2a2a2a;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+        }
+
+        .avatar-btn:hover {
+            background: #4caf50;
+        }
+
         .search-input-field {
             background: #2a2a2a;
             border: 1px solid #444;
@@ -206,7 +286,7 @@
         }
 
         .section {
-            margin: 24px 0;
+            margin: 24px 0 60px;
         }
 
         .section-header {
@@ -246,6 +326,8 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
+            margin-bottom: 0;
+            overflow: visible;
         }
 
         .card {
@@ -258,10 +340,11 @@
             cursor: pointer;
             position: relative;
             width: 220px;
+            transform-origin: center;
         }
 
         .card:hover {
-            transform: scale(1.02);
+            transform: scale(1.05);
         }
 
         .card img {
@@ -343,7 +426,10 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 20px;
-            margin-bottom: 20px;
+            margin-bottom: 0px;
+            padding-bottom: 20px;
+            overflow: visible;
+            min-height: 380px;
         }
 
         .more-btn {
@@ -592,10 +678,7 @@
             </div>
             <div class="top-categories" id="topCategories">
                 <span class="top-cat" data-cat="free">免费</span>
-                <span class="top-cat" data-cat="anime">动漫</span>
-                <span class="top-cat" data-cat="variety">综艺</span>
-                <span class="top-cat" data-cat="night">深夜</span>
-                <span class="top-cat" data-cat="event">活动</span>
+                <span class="top-cat" data-cat="event">福利</span>
             </div>
         </div>
         <div class="right-area">
@@ -624,21 +707,26 @@
                 </svg>
                 观看记录
             </button>
-            <button class="lang-btn" onclick="alert('语言切换开发中')">
+            <div class="lang-btn" id="langBtn"
+                style="position: relative; display: inline-flex; align-items: center; gap: 4px; cursor: pointer;">
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10" />
                     <line x1="2" y1="12" x2="22" y2="12" />
                     <path d="M12 2a15 15 0 0 0 0 20 15 15 0 0 0 0-20z" />
                 </svg>
                 简体中文
-            </button>
-            <div class="avatar-info" id="avatarBtn">
-                <div class="avatar-icon">👤</div>
-                <div class="avatar-text">
-                    UID689521008<br>
-                    <small>游客</small>
+                <div class="lang-list" id="langList">
+                    <div class="lang-item" data-lang="en">English</div>
+                    <div class="lang-item" data-lang="ja">日本語</div>
+                    <div class="lang-item" data-lang="ko">한국어</div>
                 </div>
             </div>
+            <button class="avatar-btn" id="avatarBtn">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -653,9 +741,6 @@
     </div>
 
     <div id="freePage" class="page"></div>
-    <div id="animePage" class="page"></div>
-    <div id="varietyPage" class="page"></div>
-    <div id="nightPage" class="page"></div>
     <div id="eventPage" class="page"></div>
 
     <div id="following" class="page">
@@ -739,6 +824,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script>
+        const langBtn = document.getElementById('langBtn');
+        const langList = document.getElementById('langList');
+
+        langBtn.addEventListener('mouseenter', () => {
+            langList.style.display = 'block';
+        });
+        langBtn.addEventListener('mouseleave', () => {
+            langList.style.display = 'none';
+        });
+        document.querySelectorAll('.lang-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.stopPropagation();
+                alert('切换语言到：' + item.innerText + '（开发中）');
+                langList.style.display = 'none';
+            });
+        });
         function generateItems(prefix, count = 15) {
             let items = [];
             for (let i = 1; i <= count; i++) {
@@ -753,7 +854,7 @@
         }
 
         const homeCategories = [
-            { name: "热门榜单", key: "hot", items: generateItems("热剧", 15) },
+            { name: "正在热播", key: "hot", items: generateItems("热剧", 15) },
             { name: "豪门霸总", key: "boss", items: generateItems("豪门", 15) },
             { name: "甜宠喜剧", key: "sweet", items: generateItems("甜宠", 15) },
             { name: "古装穿越", key: "costume", items: generateItems("古装", 15) },
@@ -764,28 +865,23 @@
         const subCategories = {
             free: [
                 { name: "全集短剧", items: generateItems("免费短剧", 15) },
-                { name: "免费电影", items: generateItems("免费电影", 15) }
-            ],
-            anime: [
+                { name: "免费电影", items: generateItems("免费电影", 15) },
                 { name: "热血动漫", items: generateItems("热血动漫", 15) },
-                { name: "治愈番剧", items: generateItems("治愈番剧", 15) }
-            ],
-            variety: [
-                { name: "爆笑综艺", items: generateItems("爆笑综艺", 15) },
-                { name: "真人秀场", items: generateItems("真人秀场", 15) }
-            ],
-            night: [
-                { name: "深夜剧场", items: generateItems("深夜剧场", 15) },
-                { name: "悬疑惊悚", items: generateItems("深夜惊悚", 15) }
+                { name: "深夜剧场", items: generateItems("深夜剧场", 15) }
             ]
         };
 
         const banners = {
-            home: ["https://picsum.photos/800/530?random=100", "https://picsum.photos/800/530?random=101", "https://picsum.photos/800/530?random=102"],
-            free: ["https://picsum.photos/800/530?random=100", "https://picsum.photos/800/530?random=101", "https://picsum.photos/800/530?random=102"],
-            anime: ["https://picsum.photos/800/530?random=103", "https://picsum.photos/800/530?random=104", "https://picsum.photos/800/530?random=105"],
-            variety: ["https://picsum.photos/800/530?random=106", "https://picsum.photos/800/530?random=107", "https://picsum.photos/800/530?random=108"],
-            night: ["https://picsum.photos/800/530?random=109", "https://picsum.photos/800/530?random=110", "https://picsum.photos/800/530?random=111"]
+            home: [
+                { img: "https://picsum.photos/800/530?random=100", title: "重生之我在AI当助理" },
+                { img: "https://picsum.photos/800/530?random=101", title: "龙虾刑警" },
+                { img: "https://picsum.photos/800/530?random=102", title: "凤求凰" }
+            ],
+            free: [
+                { img: "https://picsum.photos/800/530?random=100", title: "免费推荐1" },
+                { img: "https://picsum.photos/800/530?random=101", title: "免费推荐2" },
+                { img: "https://picsum.photos/800/530?random=102", title: "免费推荐3" }
+            ]
         };
 
         let watchHistory = JSON.parse(localStorage.getItem('watchHistory') || '[]');
@@ -943,7 +1039,21 @@
         function initSwiper(containerId, wrapperId, images) {
             const wrapper = document.getElementById(wrapperId);
             if (!wrapper) return;
-            wrapper.innerHTML = images.map(img => `<div class="swiper-slide"><img src="${img}"></div>`).join('');
+
+            wrapper.innerHTML = images.map(img => {
+                const imgUrl = typeof img === 'string' ? img : img.img;
+                const title = typeof img === 'string' ? '' : (img.title || '');
+                return `
+        <div class="swiper-slide" onclick="addToHistory({id: '${title}', name: '${title}', img: '${imgUrl}'})">
+            <img src="${imgUrl}">
+            <div class="slide-info">
+                <div class="slide-title">${title}</div>
+                <button class="slide-play-btn" onclick="event.stopPropagation(); addToHistory({id: '${title}', name: '${title}', img: '${imgUrl}'})">▶ 立即播放</button>
+            </div>
+        </div>
+    `;
+            }).join('');
+
             if (window.swipers && window.swipers[containerId]) {
                 window.swipers[containerId].destroy(true, true);
             }
@@ -1102,9 +1212,6 @@
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'homePage') renderHome();
             if (pageId === 'freePage') renderSubPage('freePage', 'free');
-            if (pageId === 'animePage') renderSubPage('animePage', 'anime');
-            if (pageId === 'varietyPage') renderSubPage('varietyPage', 'variety');
-            if (pageId === 'nightPage') renderSubPage('nightPage', 'night');
             if (pageId === 'eventPage') renderEventPage();
             if (pageId === 'following') {
                 renderHistoryGrid();
@@ -1152,9 +1259,6 @@
                 document.querySelectorAll('.top-cat').forEach(c => c.classList.remove('active'));
                 cat.classList.add('active');
                 if (catVal === 'free') switchTo('freePage');
-                else if (catVal === 'anime') switchTo('animePage');
-                else if (catVal === 'variety') switchTo('varietyPage');
-                else if (catVal === 'night') switchTo('nightPage');
                 else if (catVal === 'event') switchTo('eventPage');
             });
         });
@@ -1222,15 +1326,12 @@
             }
         });
         renderSubPage('freePage', 'free');
-        renderSubPage('animePage', 'anime');
-        renderSubPage('varietyPage', 'variety');
-        renderSubPage('nightPage', 'night');
         renderEventPage();
         renderHistoryGrid();
         bindHistoryMore();
         renderFavoritesGrid();
         updateProfileCounts();
-         function showDownloadDialog() {
+        function showDownloadDialog() {
             const dialog = document.getElementById('downloadDialog');
             if (dialog) {
                 dialog.style.display = 'flex';
@@ -1254,8 +1355,9 @@
         }
     </script>
 </body>
+
 </html>
-    </script>
+</script>
 </body>
 
 </html>
