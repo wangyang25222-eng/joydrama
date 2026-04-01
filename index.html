@@ -300,12 +300,35 @@
             font-size: 18px;
             font-weight: 600;
             color: #fff;
+            transition: color 0.2s;
+        }
+
+        .section-title:hover {
+            color: #e63946;
+            cursor: pointer;
         }
 
         .more-link {
             font-size: 13px;
-            color: #e67e22;
+            color: #fff;
             cursor: pointer;
+            transition: color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .more-link:hover {
+            color: #e63946;
+        }
+
+        .arrow-icon {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-top: 2px solid currentColor;
+            border-right: 2px solid currentColor;
+            transform: rotate(45deg);
         }
 
         .scroll-x {
@@ -424,12 +447,12 @@
         }
 
         .theater-title:hover svg {
-            stroke: #4caf50;
+            stroke: #e63946;
             opacity: 0.8;
         }
 
         .theater-title:hover {
-            color: #4caf50;
+            color: #e63946;
         }
 
         .grid-container {
@@ -465,15 +488,15 @@
         }
 
         .more-btn span:hover {
-            background: #4caf50;
+            background: #e63946;
         }
 
         .arrow-icon {
             display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-top: 2px solid white;
-            border-right: 2px solid white;
+            width: 6px;
+            height: 6px;
+            border-top: 2px solid currentColor;
+            border-right: 2px solid currentColor;
             transform: rotate(45deg);
             transition: transform 0.2s;
         }
@@ -863,20 +886,20 @@
         }
 
         const homeCategories = [
-            { name: "正在热播", key: "hot", items: generateItems("热剧", 15) },
-            { name: "豪门霸总", key: "boss", items: generateItems("豪门", 15) },
-            { name: "甜宠喜剧", key: "sweet", items: generateItems("甜宠", 15) },
-            { name: "古装穿越", key: "costume", items: generateItems("古装", 15) },
-            { name: "都市职场", key: "office", items: generateItems("职场", 15) },
-            { name: "悬疑惊悚", key: "suspense", items: generateItems("悬疑", 15) }
+            { name: "正在热播", key: "hot", items: generateItems("热剧", 10), showAll: false },
+            { name: "豪门霸总", key: "boss", items: generateItems("豪门", 10), showAll: false },
+            { name: "甜宠喜剧", key: "sweet", items: generateItems("甜宠", 10), showAll: false },
+            { name: "古装穿越", key: "costume", items: generateItems("古装", 10), showAll: false },
+            { name: "都市职场", key: "office", items: generateItems("职场", 10), showAll: false },
+            { name: "悬疑惊悚", key: "suspense", items: generateItems("悬疑", 10), showAll: false }
         ];
 
         const subCategories = {
             free: [
-                { name: "全集短剧", items: generateItems("免费短剧", 15) },
-                { name: "免费电影", items: generateItems("免费电影", 15) },
-                { name: "热血动漫", items: generateItems("热血动漫", 15) },
-                { name: "深夜剧场", items: generateItems("深夜剧场", 15) }
+                { name: "全集短剧", items: generateItems("免费短剧", 10), showAll: false },
+                { name: "免费电影", items: generateItems("免费电影", 10), showAll: false },
+                { name: "热血动漫", items: generateItems("热血动漫", 10), showAll: false },
+                { name: "深夜剧场", items: generateItems("深夜剧场", 10), showAll: false }
             ]
         };
 
@@ -1090,14 +1113,15 @@
         <div class="section">
             <div class="section-header">
                 <span class="section-title">${cat.name}</span>
-                <span class="more-link" onclick="alert('更多${cat.name}')">更多 →</span>
+                <span class="more-link" onclick="alert('更多${cat.name}')">查看全部 <i class="arrow-icon"></i></span>
             </div>
             <div class="scroll-x" id="cat-${cat.key}"></div>
         </div>
     `).join('');
             categories.forEach(cat => {
                 const listContainer = document.getElementById(`cat-${cat.key}`);
-                listContainer.innerHTML = cat.items.map(item => `
+                const itemsToShow = cat.showAll ? cat.items : cat.items.slice(0, 6);
+                listContainer.innerHTML = itemsToShow.map(item => `
             <div class="card-wrapper">
                 <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
                     <img src="${item.img}">
@@ -1148,7 +1172,7 @@
                 <div class="section">
                     <div class="section-header">
                         <span class="section-title">${sub.name}</span>
-                        <span class="more-link" onclick="alert('更多${sub.name}')">更多 →</span>
+                        <span class="more-link" onclick="alert('更多${sub.name}')">查看全部 <i class="arrow-icon"></i></span>
                     </div>
                     <div class="scroll-x" id="subcat-${pageId}-${sub.name.replace(/ /g, '')}"></div>
                 </div>
@@ -1158,7 +1182,8 @@
             initSwiper(`swiper-${catKey}`, `swiper-wrapper-${catKey}`, catBanners);
             subCats.forEach(sub => {
                 const listContainer = document.getElementById(`subcat-${pageId}-${sub.name.replace(/ /g, '')}`);
-                listContainer.innerHTML = sub.items.map(item => `
+                const itemsToShow = sub.showAll ? sub.items : sub.items.slice(0, 6);
+                listContainer.innerHTML = itemsToShow.map(item => `
                 <div class="card-wrapper">
                     <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
                         <img src="${item.img}">
