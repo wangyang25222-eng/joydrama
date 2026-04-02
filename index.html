@@ -628,7 +628,7 @@
             }
 
             .scroll-x .card-wrapper {
-                flex: 0 0 calc((100% / 2.5) - 12px);
+                flex: 0 0 calc((100% / 3) - 12px);
                 scroll-snap-align: start;
             }
         }
@@ -878,7 +878,7 @@
             </div>
         </div>
     </div>
-
+    <div id="categoryPage" class="page"></div>
     <div id="profile" class="page">
         <div style="padding: 16px;">
             <div class="profile-header">
@@ -1184,9 +1184,9 @@
             container.innerHTML = categories.map(cat => `
         <div class="section" data-cat-key="${cat.key}">
             <div class="section-header">
-                <span class="section-title">${cat.name}</span>
-                <span class="more-link" onclick="alert('更多${cat.name}')">查看全部 <i class="arrow-icon"></i></span>
-            </div>
+    <span class="section-title" data-category="${cat.name}" style="cursor:pointer;">${cat.name}</span>
+    <span class="more-link" data-category="${cat.name}">查看全部 <i class="arrow-icon"></i></span>
+</div>
             <div style="position: relative;">
                 <div class="scroll-x" id="cat-${cat.key}"></div>
                 <div class="category-arrow category-arrow-right" data-cat-key="${cat.key}" data-direction="right">
@@ -1231,6 +1231,19 @@
                         const img = card.dataset.img;
                         addToHistory({ id, name, img });
                     });
+                });
+            });
+            // 绑定分类标题和查看全部的点击事件
+            document.querySelectorAll('#homeContent .section-title, #homeContent .more-link').forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const category = el.dataset.category;
+                    if (category) {
+                        console.log('打开分类：', category);
+                        // 切换到分类页面并渲染
+                        switchTo('categoryPage');
+                        renderCategoryPage(category);
+                    }
                 });
             });
 
@@ -1337,8 +1350,8 @@
                 html += `
             <div class="section" data-cat-key="${sub.name}">
                 <div class="section-header">
-                    <span class="section-title">${sub.name}</span>
-                    <span class="more-link" onclick="alert('更多${sub.name}')">查看全部 <i class="arrow-icon"></i></span>
+                <span class="section-title category-title" data-category="${sub.name}" style="cursor:pointer;">${sub.name}</span>
+<span class="more-link view-all-btn" data-category="${sub.name}">查看全部 <i class="arrow-icon"></i></span>
                 </div>
                 <div style="position: relative;">
                     <div class="scroll-x" id="subcat-${pageId}-${sub.name.replace(/ /g, '')}"></div>
@@ -1471,6 +1484,96 @@
             </div>
         `;
         }
+        function renderCategoryPage(categoryName) {
+            // 先从主页分类查找
+            let category = homeCategories.find(c => c.name === categoryName);
+            let items = category ? category.items : null;
+            let displayName = categoryName;
+
+            // 如果主页没有，再从免费页查找
+            if (!items) {
+                const freeCat = subCategories.free.find(c => c.name === categoryName);
+                if (freeCat) {
+                    items = freeCat.items;
+                    displayName = categoryName;
+                }
+            }
+
+            if (!items) {
+                alert('分类不存在: ' + categoryName);
+                return;
+            }
+
+            const container = document.getElementById('categoryPage');
+            const pageSize = 18;
+            let currentPage = 1;
+            const totalItems = items.length;
+            const totalPages = Math.ceil(totalItems / pageSize);
+
+            function render() {
+                const start = (currentPage - 1) * pageSize;
+                const pageItems = items.slice(start, start + pageSize);
+
+                const gridHtml = pageItems.map(item => `
+            <div class="card-wrapper">
+                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+                    <img src="${item.img}">
+                    <div class="card-hover-icons">
+                        <div class="play-icon">
+                            <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-title">${item.name}</div>
+            </div>
+        `).join('');
+
+                let paginationHtml = `<div style="display: flex; justify-content: center; gap: 8px; margin-top: 30px; flex-wrap: wrap; align-items: center;">`;
+                if (currentPage > 1) {
+                    paginationHtml += `<button onclick="changeCategoryPage(${currentPage - 1})" style="background: #e63946; border: none; padding: 6px 12px; border-radius: 6px; color: white; cursor: pointer;">上一页</button>`;
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === currentPage) {
+                        paginationHtml += `<button style="background: #e63946; border: none; padding: 6px 12px; border-radius: 6px; color: white; font-weight: bold;">${i}</button>`;
+                    } else {
+                        paginationHtml += `<button onclick="changeCategoryPage(${i})" style="background: #333; border: none; padding: 6px 12px; border-radius: 6px; color: white; cursor: pointer;">${i}</button>`;
+                    }
+                }
+                if (currentPage < totalPages) {
+                    paginationHtml += `<button onclick="changeCategoryPage(${currentPage + 1})" style="background: #e63946; border: none; padding: 6px 12px; border-radius: 6px; color: white; cursor: pointer;">下一页</button>`;
+                }
+                paginationHtml += `<span style="margin-left: 16px; color: #aaa; display: inline-flex; align-items: center;">第 ${currentPage} / ${totalPages} 页，共 ${totalItems} 部</span>`;
+                paginationHtml += `</div>`;
+
+                container.innerHTML = `
+            <div style="padding: 100px 20px 40px 20px;">
+                <h2 style="margin: 0 0 24px 0;">${displayName}</h2>
+                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">${gridHtml}</div>
+                ${paginationHtml}
+            </div>
+        `;
+
+                container.querySelectorAll('.card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('.play-icon')) return;
+                        addToHistory({
+                            id: card.dataset.id,
+                            name: card.dataset.name,
+                            img: card.dataset.img
+                        });
+                    });
+                });
+            }
+
+            window.changeCategoryPage = function (page) {
+                currentPage = page;
+                render();
+            };
+
+            render();
+        }
 
         function renderHome() {
             initSwiper('homeSwiper', 'homeSwiperWrapper', banners.home);
@@ -1479,11 +1582,39 @@
 
         let currentPage = 'homePage';
         function switchTo(pageId) {
+            document.querySelectorAll('.top-cat').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             if (pageId === 'homePage') renderHome();
-            if (pageId === 'freePage') renderSubPage('freePage', 'free');
-            if (pageId === 'eventPage') renderEventPage();
+            if (pageId === 'freePage') {
+                renderSubPage('freePage', 'free');
+                document.querySelector('.top-cat[data-cat="free"]').classList.add('active');
+            }
+            if (pageId === 'freePage') {
+                setTimeout(() => {
+                    document.querySelectorAll('#freePage .section-title, #freePage .more-link').forEach(el => {
+                        el.onclick = (e) => {
+                            e.stopPropagation();
+                            let category = el.dataset.category;
+                            if (!category && el.classList.contains('section-title')) {
+                                category = el.innerText;
+                            }
+                            if (!category && el.classList.contains('more-link')) {
+                                category = el.innerText.replace('查看全部', '').trim();
+                            }
+                            if (category) {
+                                switchTo('categoryPage');
+                                document.querySelector('.top-cat[data-cat="free"]').classList.add('active');
+                                renderCategoryPage(category);
+                            }
+                        };
+                    });
+                }, 100);
+            }
+            if (pageId === 'eventPage') {
+                renderEventPage();
+                document.querySelector('.top-cat[data-cat="event"]').classList.add('active');
+            }
             if (pageId === 'following') {
                 renderHistoryGrid();
                 renderFavoritesGrid();
