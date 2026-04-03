@@ -955,47 +955,35 @@
                 langList.style.display = 'none';
             });
         });
-        function generateItems(prefix, count = 15) {
+        function generateItems(prefix, count = 15, category = '') {
             let items = [];
             for (let i = 1; i <= count; i++) {
                 items.push({
                     id: `${prefix}${i}`,
                     name: `${prefix}${i}`,
                     img: `https://picsum.photos/300/180?random=${Math.random()}`,
-                    rating: (7 + Math.random() * 2).toFixed(1)
+                    rating: (7 + Math.random() * 2).toFixed(1),
+                    category: category
                 });
             }
             return items;
         }
 
         const homeCategories = [
-            { name: "正在热播", key: "hot", items: generateItems("热剧", 10) },
-            { name: "豪门霸总", key: "boss", items: generateItems("豪门", 10) },
-            { name: "甜宠喜剧", key: "sweet", items: generateItems("甜宠", 10) },
-            { name: "古装穿越", key: "costume", items: generateItems("古装", 10) },
-            { name: "都市职场", key: "office", items: generateItems("职场", 10) },
-            { name: "悬疑惊悚", key: "suspense", items: generateItems("悬疑", 10) }
+            { name: "正在热播", key: "hot", items: generateItems("热剧", 10, "正在热播") },
+            { name: "豪门霸总", key: "boss", items: generateItems("豪门", 10, "豪门霸总") },
+            { name: "甜宠喜剧", key: "sweet", items: generateItems("甜宠", 10, "甜宠喜剧") },
+            { name: "古装穿越", key: "costume", items: generateItems("古装", 10, "古装穿越") },
+            { name: "都市职场", key: "office", items: generateItems("职场", 10, "都市职场") },
+            { name: "悬疑惊悚", key: "suspense", items: generateItems("悬疑", 10, "悬疑惊悚") }
         ];
 
         const subCategories = {
             free: [
-                { name: "全集短剧", items: generateItems("免费短剧", 10) },
-                { name: "免费电影", items: generateItems("免费电影", 10) },
-                { name: "热血动漫", items: generateItems("热血动漫", 10) },
-                { name: "深夜剧场", items: generateItems("深夜剧场", 10) }
-            ]
-        };
-
-        const banners = {
-            home: [
-                { img: "https://picsum.photos/800/530?random=100", title: "重生之我在AI当助理" },
-                { img: "https://picsum.photos/800/530?random=101", title: "龙虾刑警" },
-                { img: "https://picsum.photos/800/530?random=102", title: "凤求凰" }
-            ],
-            free: [
-                { img: "https://picsum.photos/800/530?random=100", title: "免费推荐1" },
-                { img: "https://picsum.photos/800/530?random=101", title: "免费推荐2" },
-                { img: "https://picsum.photos/800/530?random=102", title: "免费推荐3" }
+                { name: "全集短剧", items: generateItems("免费短剧", 10, "全集短剧") },
+                { name: "免费电影", items: generateItems("免费电影", 10, "免费电影") },
+                { name: "热血动漫", items: generateItems("热血动漫", 10, "热血动漫") },
+                { name: "深夜剧场", items: generateItems("深夜剧场", 10, "深夜剧场") }
             ]
         };
 
@@ -1020,6 +1008,116 @@
             if (favCount) favCount.innerText = favorites.length;
             if (historyCount) historyCount.innerText = watchHistory.length;
         }
+        // 打开播放页面
+        function openPlayerPage(movieId, movieName, movieImg, categoryName) {
+            window.scrollTo(0, 0);
+            document.body.style.overflow = 'hidden';
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+            let playerPage = document.getElementById('playerPage');
+            if (!playerPage) {
+                playerPage = document.createElement('div');
+                playerPage.id = 'playerPage';
+                playerPage.className = 'page';
+                document.body.insertBefore(playerPage, document.getElementById('homePage'));
+            }
+
+            // 判断横竖屏：免费电影、热血动漫、深夜剧场为横屏，其他为竖屏
+            const isLandscape = categoryName === '免费电影' || categoryName === '热血动漫' || categoryName === '深夜剧场';
+            const aspectRatio = isLandscape ? '16 / 9' : '9 / 16';
+
+            playerPage.innerHTML = `
+        <style>
+            .player-container {
+                display: flex;
+                gap: 40px;
+                padding: 60px 20px 40px 20px;
+                max-width: 1400px;
+                margin: 0 auto;
+                min-height: calc(100vh - 60px);
+                align-items: flex-start;
+            }
+.player-left {
+    flex: 2;
+    min-width: 280px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.player-left-inner {
+    background: #000;
+    overflow: hidden;
+    width: auto;
+    height: auto;
+    max-height: 100%;
+    aspect-ratio: ${aspectRatio};
+    flex-shrink: 0;
+}
+.player-left-inner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+            .player-right {
+                flex: 1;
+                min-width: 200px;
+                position: relative;
+                padding-left: 40px;
+            }
+            .player-right::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: #444;
+            }
+            .player-right-content {
+                overflow-y: auto;
+                max-height: calc(100vh - 100px);
+                padding-right: 10px;
+            }
+            @media (max-width: 768px) {
+                .player-container {
+                    flex-direction: column;
+                }
+                .player-right::before {
+                    display: none;
+                }
+                .player-left {
+                    position: static;
+                }
+            }
+        </style>
+        <div class="player-container">
+            <div class="player-left">
+                <div class="player-left-inner">
+                    <img src="${movieImg}">
+                </div>
+            </div>
+            <div class="player-right">
+                <div class="player-right-content">
+                    <h2>${movieName}</h2>
+                    <p style="color: #aaa;">分类: ${categoryName || '未分类'}</p>
+                    <p style="color: #ccc; margin-top: 16px;">这是一个精彩的短剧，讲述了主角的传奇故事。剧情紧凑，引人入胜，快来观看吧！</p>
+                    <p style="color: #ccc; margin-top: 16px;">更多内容在这里，右边区域可以滚动，左边的播放器固定不动。</p>
+                    <p style="color: #ccc; margin-top: 16px;">竖线会从顶部一直延伸到底部，不会因为滚动而变短。</p>
+                    <p style="color: #ccc; margin-top: 16px;">集数列表、点赞收藏等功能后续添加。</p>
+                    <p style="color: #ccc; margin-top: 16px;">测试文字1</p>
+                    <p style="color: #ccc; margin-top: 16px;">测试文字2</p>
+                    <p style="color: #ccc; margin-top: 16px;">测试文字3</p>
+                    <p style="color: #ccc; margin-top: 16px;">测试文字4</p>
+                    <p style="color: #ccc; margin-top: 16px;">测试文字5</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+            playerPage.classList.add('active');
+        }
 
         function addToHistory(item) {
             if (!watchHistory.find(h => h.id === item.id)) {
@@ -1033,6 +1131,8 @@
                 saveHistory();
                 renderHistoryGrid();
             }
+            // 跳转到播放页面
+            openPlayerPage(item.id, item.name, item.img, item.category);
         }
 
         function addToFavorite(item) {
@@ -1055,7 +1155,7 @@
         function renderCard(item, isFavorite = false) {
             return `
         <div class="card-wrapper">
-            <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+            <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}" data-category="${item.category}">
                 <img src="${item.img}">
                 <div class="card-hover-icons">
                     <div class="play-icon">
@@ -1158,12 +1258,13 @@
             wrapper.innerHTML = images.map(img => {
                 const imgUrl = typeof img === 'string' ? img : img.img;
                 const title = typeof img === 'string' ? '' : (img.title || '');
+                const category = typeof img === 'string' ? '' : (img.category || '');
                 return `
-        <div class="swiper-slide" onclick="addToHistory({id: '${title}', name: '${title}', img: '${imgUrl}'})">
+        <div class="swiper-slide" onclick="addToHistory({id: '${title}', name: '${title}', img: '${imgUrl}', category: '${category}'})">
             <img src="${imgUrl}">
             <div class="slide-info">
                 <div class="slide-title">${title}</div>
-                <button class="slide-play-btn" onclick="event.stopPropagation(); addToHistory({id: '${title}', name: '${title}', img: '${imgUrl}'})">▶ 立即播放</button>
+                <button class="slide-play-btn" onclick="event.stopPropagation(); addToHistory({id: '${title}', name: '${title}', img: '${imgUrl}', category: '${category}'})">▶ 立即播放</button>
             </div>
         </div>
     `;
@@ -1230,7 +1331,8 @@
                         const id = card.dataset.id;
                         const name = card.dataset.name;
                         const img = card.dataset.img;
-                        addToHistory({ id, name, img });
+                        const category = card.dataset.category;
+                        addToHistory({ id, name, img, category });
                     });
                 });
 
@@ -1304,7 +1406,7 @@
 
             container.innerHTML = itemsToShow.map(item => `
         <div class="card-wrapper">
-            <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+            <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}" data-category="${item.category}">
                 <img src="${item.img}">
                 <div class="card-hover-icons">
                     <div class="play-icon">
@@ -1324,7 +1426,8 @@
                     const id = card.dataset.id;
                     const name = card.dataset.name;
                     const img = card.dataset.img;
-                    addToHistory({ id, name, img });
+                    const category = card.dataset.category;
+                    addToHistory({ id, name, img, category });
                 });
             });
 
@@ -1343,10 +1446,8 @@
         function renderSubPage(pageId, catKey) {
             const container = document.getElementById(pageId);
             if (!container) return;
-            const catBanners = banners[catKey];
             const subCats = subCategories[catKey];
 
-            // 初始化 currentIndex
             subCats.forEach(sub => {
                 sub.currentIndex = 0;
             });
@@ -1362,30 +1463,43 @@
                 html += `
             <div class="section" data-cat-key="${sub.name}">
                 <div class="section-header">
-                <span class="section-title category-title" data-category="${sub.name}" style="cursor:pointer;">${sub.name}</span>
-<span class="more-link view-all-btn" data-category="${sub.name}">查看全部 <i class="arrow-icon"></i></span>
+                    <span class="section-title category-title" data-category="${sub.name}" style="cursor:pointer;">${sub.name}</span>
+                    <span class="more-link view-all-btn" data-category="${sub.name}">查看全部 <i class="arrow-icon"></i></span>
                 </div>
                 <div style="position: relative;">
                     <div class="scroll-x" id="subcat-${pageId}-${sub.name.replace(/ /g, '')}"></div>
                     <div class="category-arrow category-arrow-right" data-cat-key="${sub.name}" data-direction="right">
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" stroke-width="2">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </div>
                     <div class="category-arrow category-arrow-left" data-cat-key="${sub.name}" data-direction="left" style="display: none;">
-                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" stroke-width="2">
-                            <polyline points="15 18 9 12 15 6"></polyline>
-                        </svg>
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="white" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
                     </div>
                 </div>
             </div>
         `;
             });
 
-            container.innerHTML = html;
-            initSwiper(`swiper-${catKey}`, `swiper-wrapper-${catKey}`, catBanners);
+            const freeBannerConfig = [
+                { categoryName: "全集短剧", movieId: "免费短剧1" },
+                { categoryName: "免费电影", movieId: "免费电影1" },
+                { categoryName: "热血动漫", movieId: "热血动漫1" },
+                { categoryName: "深夜剧场", movieId: "深夜剧场1" }
+            ];
 
-            // 渲染卡片并绑定箭头事件
+            const freeBanners = freeBannerConfig.map(config => {
+                const category = subCategories[catKey].find(c => c.name === config.categoryName);
+                const movie = category?.items.find(item => item.id === config.movieId);
+                return movie ? {
+                    img: movie.img,
+                    title: movie.name,
+                    category: config.categoryName,
+                    id: movie.id
+                } : null;
+            }).filter(Boolean);
+
+            container.innerHTML = html;
+            initSwiper(`swiper-${catKey}`, `swiper-wrapper-${catKey}`, freeBanners);
+
             subCats.forEach(sub => {
                 const listContainer = document.getElementById(`subcat-${pageId}-${sub.name.replace(/ /g, '')}`);
                 const start = sub.currentIndex;
@@ -1393,13 +1507,11 @@
 
                 listContainer.innerHTML = itemsToShow.map(item => `
             <div class="card-wrapper">
-                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}" data-category="${item.category}">
                     <img src="${item.img}">
                     <div class="card-hover-icons">
-                        <div class="play-icon" onclick="event.stopPropagation(); addToHistory({id:'${item.id}', name:'${item.name}', img:'${item.img}'})">
-                            <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
-                                <polygon points="5 3 19 12 5 21 5 3" />
-                            </svg>
+                        <div class="play-icon" onclick="event.stopPropagation(); addToHistory({id:'${item.id}', name:'${item.name}', img:'${item.img}', category:'${item.category}'})">
+                            <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><polygon points="5 3 19 12 5 21 5 3" /></svg>
                         </div>
                     </div>
                 </div>
@@ -1413,12 +1525,12 @@
                         const id = card.dataset.id;
                         const name = card.dataset.name;
                         const img = card.dataset.img;
-                        addToHistory({ id, name, img });
+                        const category = card.dataset.category;
+                        addToHistory({ id, name, img, category });
                     });
                 });
             });
 
-            // 绑定箭头点击事件
             document.querySelectorAll(`#${pageId} .category-arrow-right, #${pageId} .category-arrow-left`).forEach(arrow => {
                 arrow.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -1438,13 +1550,11 @@
                     const itemsToShow = category.items.slice(start, start + 6);
                     listContainer.innerHTML = itemsToShow.map(item => `
                 <div class="card-wrapper">
-                    <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+                    <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}" data-category="${item.category}">
                         <img src="${item.img}">
                         <div class="card-hover-icons">
-                            <div class="play-icon" onclick="event.stopPropagation(); addToHistory({id:'${item.id}', name:'${item.name}', img:'${item.img}'})">
-                                <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
-                                    <polygon points="5 3 19 12 5 21 5 3" />
-                                </svg>
+                            <div class="play-icon" onclick="event.stopPropagation(); addToHistory({id:'${item.id}', name:'${item.name}', img:'${item.img}', category:'${item.category}'})">
+                                <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><polygon points="5 3 19 12 5 21 5 3" /></svg>
                             </div>
                         </div>
                     </div>
@@ -1452,18 +1562,17 @@
                 </div>
             `).join('');
 
-                    // 重新绑定卡片事件
                     listContainer.querySelectorAll('.card').forEach(card => {
                         card.addEventListener('click', (e) => {
                             if (e.target.closest('.play-icon')) return;
                             const id = card.dataset.id;
                             const name = card.dataset.name;
                             const img = card.dataset.img;
-                            addToHistory({ id, name, img });
+                            const category = card.dataset.category;
+                            addToHistory({ id, name, img, category });
                         });
                     });
 
-                    // 更新箭头显示
                     const section = arrow.closest('.section');
                     const rightArrow = section.querySelector('.category-arrow-right');
                     const leftArrow = section.querySelector('.category-arrow-left');
@@ -1556,7 +1665,7 @@
 
                 const gridHtml = pageItems.map(item => `
             <div class="card-wrapper">
-                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}">
+                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}" data-category="${item.category}">
                     <img src="${item.img}">
                     <div class="card-hover-icons">
                         <div class="play-icon">
@@ -1601,7 +1710,8 @@
                         addToHistory({
                             id: card.dataset.id,
                             name: card.dataset.name,
-                            img: card.dataset.img
+                            img: card.dataset.img,
+                            category: card.dataset.category
                         });
                     });
                 });
@@ -1616,12 +1726,32 @@
         }
 
         function renderHome() {
-            initSwiper('homeSwiper', 'homeSwiperWrapper', banners.home);
+            // 轮播图配置：指定要显示哪个分类的哪部影片
+            const homeBannerConfig = [
+                { categoryName: "正在热播", movieId: "热剧1" },
+                { categoryName: "豪门霸总", movieId: "豪门1" },
+                { categoryName: "甜宠喜剧", movieId: "甜宠1" }
+            ];
+
+            // 从分类数据中匹配轮播图影片
+            const homeBanners = homeBannerConfig.map(config => {
+                const category = homeCategories.find(c => c.name === config.categoryName);
+                const movie = category?.items.find(item => item.id === config.movieId);
+                return movie ? {
+                    img: movie.img,
+                    title: movie.name,
+                    category: config.categoryName,
+                    id: movie.id
+                } : null;
+            }).filter(Boolean);
+
+            initSwiper('homeSwiper', 'homeSwiperWrapper', homeBanners);
             renderCategories('homeContent', homeCategories);
         }
 
         let currentPage = 'homePage';
         function switchTo(pageId) {
+            document.body.style.overflow = '';
             document.querySelectorAll('.top-cat').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
@@ -1739,7 +1869,8 @@
                 const id = card.dataset.id;
                 const name = card.dataset.name;
                 const img = card.dataset.img;
-                addToHistory({ id, name, img });
+                const category = card.dataset.category;
+                addToHistory({ id, name, img, category });
             }
             // 片名点击
             if (e.target.classList.contains('card-title')) {
@@ -1748,7 +1879,8 @@
                 const id = card.dataset.id;
                 const name = card.dataset.name;
                 const img = card.dataset.img;
-                addToHistory({ id, name, img });
+                const category = card.dataset.category;
+                addToHistory({ id, name, img, category });
             }
             // 播放按钮点击
             if (e.target.closest('.play-icon')) {
@@ -1756,7 +1888,8 @@
                 const id = card.dataset.id;
                 const name = card.dataset.name;
                 const img = card.dataset.img;
-                addToHistory({ id, name, img });
+                const category = card.dataset.category;
+                addToHistory({ id, name, img, category });
             }
             // 图片点击
             if (e.target.tagName === 'IMG' && e.target.closest('.card')) {
@@ -1764,7 +1897,8 @@
                 const id = card.dataset.id;
                 const name = card.dataset.name;
                 const img = card.dataset.img;
-                addToHistory({ id, name, img });
+                const category = card.dataset.category;
+                addToHistory({ id, name, img, category });
             }
         });
         renderSubPage('freePage', 'free');
