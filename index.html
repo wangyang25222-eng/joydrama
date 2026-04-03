@@ -614,6 +614,18 @@
                 display: none !important;
             }
 
+            .right-area .lang-btn:not(#searchBtn) {
+                display: none;
+            }
+
+            .avatar-btn {
+                display: none;
+            }
+
+            #langBtn {
+                display: none !important;
+            }
+
             .scroll-x {
                 display: flex;
                 overflow-x: auto;
@@ -1474,25 +1486,25 @@
 
             const tasks = [
                 { icon: "📅", name: "每日签到", desc: "连续签到7天得100积分", btn: "去签到", action: "签到成功！获得10积分" },
-                { icon: "🧧", name: "每日红包", desc: "每日限量100份，先到先得", btn: "领取", action: "领取成功！获得20积分" },
+                { icon: "🧧", name: "每日红包", desc: "每日限量100份，先到先得", btn: "去领取", action: "领取成功！获得20积分" },
                 { icon: "📝", name: "每日发布", desc: "发布优质影片得红包", btn: "去发布", action: "发布功能开发中" },
-                { icon: "👥", name: "邀请好友", desc: "每邀请1人得50积分", btn: "邀请", action: "邀请链接复制成功" },
+                { icon: "👥", name: "邀请好友", desc: "每邀请1人得50积分", btn: "去邀请", action: "邀请链接复制成功" },
                 { icon: "🎬", name: "观看任务", desc: "观看满30分钟领20积分", btn: "去观看", action: "跳转到播放页" },
                 { icon: "⭐", name: "每日点赞", desc: "点赞任意3部剧领10积分", btn: "去点赞", action: "跳转到首页点赞" }
             ];
 
             const tasksHtml = tasks.map(task => `
-        <div style="display: flex; align-items: center; justify-content: space-between; background: #2a2a2a; padding: 16px 20px; border-radius: 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
-            <div style="display: flex; align-items: center; gap: 16px;">
-                <span style="font-size: 32px; width: 48px; display: inline-flex; align-items: center; justify-content: center;">${task.icon}</span>
-                <div>
-                    <div style="font-weight: bold; margin-bottom: 4px;">${task.name}</div>
-                    <div style="font-size: 13px; color: #aaa;">${task.desc}</div>
-                </div>
+    <div style="display: flex; align-items: center; justify-content: space-between; background: #2a2a2a; padding: 16px 20px; border-radius: 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <span style="font-size: 32px; width: 48px; display: inline-block; text-align: left;">${task.icon}</span>
+            <div>
+                <div style="font-weight: bold; margin-bottom: 4px;">${task.name}</div>
+                <div style="font-size: 13px; color: #aaa;">${task.desc}</div>
             </div>
-            <button class="task-btn" data-action="${task.action}" style="background: #e63946; border: none; padding: 8px 20px; border-radius: 24px; color: white; cursor: pointer; font-size: 14px;">${task.btn}</button>
         </div>
-    `).join('');
+        <button class="task-btn" data-action="${task.action}" style="background: #e63946; border: none; padding: 8px 20px; border-radius: 24px; color: white; cursor: pointer; font-size: 14px;">${task.btn}</button>
+    </div>
+`).join('');
 
             container.innerHTML = `
         <div style="padding: 100px 20px 40px 20px;">
