@@ -1010,6 +1010,7 @@
         }
         // 打开播放页面
         function openPlayerPage(movieId, movieName, movieImg, categoryName) {
+            document.body.style.paddingBottom = '0';
             window.scrollTo(0, 0);
             document.body.style.overflow = 'hidden';
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -1034,13 +1035,12 @@
                 padding: 60px 20px 40px 20px;
                 max-width: 1400px;
                 margin: 0 auto;
-                min-height: calc(100vh - 60px);
-                align-items: flex-start;
+                height: 100vh;
+                align-items: stretch;
             }
 .player-left {
     flex: 2;
     min-width: 280px;
-    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1049,10 +1049,6 @@
 .player-left-inner {
     background: #000;
     overflow: hidden;
-    width: auto;
-    height: auto;
-    max-height: 100%;
-    aspect-ratio: ${aspectRatio};
     flex-shrink: 0;
 }
 .player-left-inner img {
@@ -1066,6 +1062,10 @@
                 position: relative;
                 padding-left: 40px;
             }
+                .player-right {
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
             .player-right::before {
                 content: '';
                 position: absolute;
@@ -1080,6 +1080,14 @@
                 max-height: calc(100vh - 100px);
                 padding-right: 10px;
             }
+                #playerPage {
+    height: 100vh;
+    overflow: hidden;
+}
+.player-container {
+    height: 100% !important;
+    min-height: 100% !important;
+}
             @media (max-width: 768px) {
                 .player-container {
                     flex-direction: column;
@@ -1094,7 +1102,7 @@
         </style>
         <div class="player-container">
             <div class="player-left">
-                <div class="player-left-inner">
+                <div class="player-left-inner" style="${isLandscape ? 'width:100%; height:100%; max-height:100%;' : 'aspect-ratio:9/16;'}">
                     <img src="${movieImg}">
                 </div>
             </div>
@@ -1110,13 +1118,20 @@
                     <p style="color: #ccc; margin-top: 16px;">测试文字2</p>
                     <p style="color: #ccc; margin-top: 16px;">测试文字3</p>
                     <p style="color: #ccc; margin-top: 16px;">测试文字4</p>
-                    <p style="color: #ccc; margin-top: 16px;">测试文字5</p>
+                    <p style="color: #ccc; margin-top: 16px;">测试文字5</p>                    
                 </div>
             </div>
         </div>
     `;
 
             playerPage.classList.add('active');
+            if (!isLandscape && window.innerWidth > 768) {
+                const left = document.querySelector('.player-left');
+                if (left) {
+                    left.style.justifyContent = 'flex-start';
+                    left.style.paddingTop = '0';
+                }
+            }
         }
 
         function addToHistory(item) {
@@ -1751,6 +1766,7 @@
 
         let currentPage = 'homePage';
         function switchTo(pageId) {
+            document.body.style.paddingBottom = '';
             document.body.style.overflow = '';
             document.querySelectorAll('.top-cat').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
