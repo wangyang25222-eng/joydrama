@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .back-btn {
             position: fixed;
@@ -612,6 +613,13 @@
             color: #e67e22;
         }
 
+        .desc-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -1150,19 +1158,35 @@
             <div class="player-right">
 <div class="player-right-content">
     <!-- 面包屑 -->
-    <div class="breadcrumb" style="color: #aaa; margin-bottom: 8px; font-size: 14px;">
-        ${categoryName} / ${movieName} / 第1集
-    </div>
+<div class="breadcrumb" style="color: #aaa; margin-top: 20px; margin-bottom: 8px; font-size: 14px;">
+    <span onclick="switchTo('categoryPage'); renderCategoryPage('${categoryName}');" style="cursor: pointer; color: #e63946;">${categoryName}</span>
+     / ${movieName} / 第1集
+</div>
     <!-- 标题 -->
-    <h2 style="margin: 0 0 16px 0; font-size: 24px;">第1集 · ${movieName}</h2>
+    <h2 style="margin: 24px 0 16px 0; font-size: 24px;">第1集 · ${movieName}</h2>
     <!-- 简介 -->
-    <p style="color: #ccc; line-height: 1.5; margin-bottom: 20px;">这是一个精彩的短剧，讲述了主角的传奇故事。剧情紧凑，引人入胜，快来观看吧！</p>
-    <!-- 点赞/收藏/分享按钮 -->
-    <div style="display: flex; gap: 24px; margin-bottom: 24px; border-top: 1px solid #444; border-bottom: 1px solid #444; padding: 12px 0;">
-        <button class="like-btn" style="background: none; border: none; color: white; font-size: 16px; cursor: pointer;">❤️ 0</button>
-        <button class="fav-btn" style="background: none; border: none; color: white; font-size: 16px; cursor: pointer;">⭐ 0</button>
-        <button class="share-btn" style="background: none; border: none; color: white; font-size: 16px; cursor: pointer;">↗️ 分享</button>
-    </div>
+<p class="desc-text" style="color: #ccc; line-height: 1.5; margin-top: 30px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">被男友联手继妹做局陷害，全网喊打？黎欢笑了。我送外卖只是体验生活，你们还真敢把BOSS当小兵啊？她破局的手段很简单——生死看淡，不服就干。直播打脸渣男、手撕绿茶继妹，三句话让整个家族跪下认主。顺手还捡了个又奶又狠的萧家二少，把他从娱乐圈小透明训练成首富继承人，让他哭着喊着要，姐姐求您娶了我吧！当豪门纷纷求饶、仇人跪地痛哭，黎欢弹了弹烟灰，轻描淡写，“急什么？这才刚开局。</p>
+<button class="desc-more" style="display: none; background: none; border: none; color: #e63946; cursor: pointer; margin-top: 4px;">更多</button> 
+<!-- 点赞/收藏/分享按钮 -->
+<div style="display: flex; gap: 32px; margin-bottom: 24px; border-top: 1px solid #444; border-bottom: 1px solid #444; padding: 20px 0; justify-content: space-around;">
+<!-- 点赞 -->
+<button class="like-btn" style="background: none; border: none; cursor: pointer; text-align: center;">
+    <i class="fas fa-heart" style="font-size: 32px; color: #ccc;"></i>
+    <div class="like-count" style="color: #aaa; font-size: 14px; margin-top: 4px;">0</div>
+</button>
+<!-- 收藏 -->
+<button class="fav-btn" style="background: none; border: none; cursor: pointer; text-align: center;">
+    <i class="fas fa-star" style="font-size: 32px; color: #ccc;"></i>
+    <div class="fav-count" style="color: #aaa; font-size: 14px; margin-top: 4px;">0</div>
+</button>
+    <!-- 分享 -->
+    <button class="share-btn" style="background: none; border: none; cursor: pointer; text-align: center;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="#cccccc" stroke="#cccccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 4.5V8.5C7 9.5 4 14.5 3 20C5.5 16.5 9 15 14 15V19L21.5 11.75L14 4.5Z" />
+        </svg>
+        <div style="color: #cccccc; font-size: 14px; margin-top: -2px;">分享</div>
+    </button>
+</div>
     <!-- 分页控件（集数页面切换） -->
     <div class="episode-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <button class="page-prev" style="background: #333; border: none; padding: 4px 12px; border-radius: 4px; color: white; cursor: pointer;">上一页</button>
@@ -1245,6 +1269,59 @@
 
             // 初始化
             renderEpisodeList();
+            const descText = document.querySelector('.desc-text');
+            const moreBtn = document.querySelector('.desc-more');
+            if (descText && moreBtn && descText.innerText.length > 100) {
+                moreBtn.style.display = 'block';
+                let expanded = false;
+                moreBtn.onclick = () => {
+                    if (expanded) {
+                        descText.style.webkitLineClamp = '3';
+                        moreBtn.textContent = '更多';
+                    } else {
+                        descText.style.webkitLineClamp = 'unset';
+                        moreBtn.textContent = '收起';
+                    }
+                    expanded = !expanded;
+                };
+            }
+            // 点赞
+            const likeBtn = document.querySelector('.like-btn');
+            const likeIcon = document.querySelector('.like-btn i');
+            const likeCount = document.querySelector('.like-count');
+            let liked = false;
+            if (likeBtn && likeIcon && likeCount) {
+                likeBtn.onclick = () => {
+                    if (!liked) {
+                        liked = true;
+                        likeIcon.style.color = '#e63946';
+                        likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                    } else {
+                        liked = false;
+                        likeIcon.style.color = '#ccc';
+                        likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                    }
+                };
+            }
+
+            // 收藏
+            const favBtn = document.querySelector('.fav-btn');
+            const favIcon = document.querySelector('.fav-btn i');
+            const favCount = document.querySelector('.fav-count');
+            let favorited = false;
+            if (favBtn && favIcon && favCount) {
+                favBtn.onclick = () => {
+                    if (!favorited) {
+                        favorited = true;
+                        favIcon.style.color = '#e63946';
+                        favCount.textContent = parseInt(favCount.textContent) + 1;
+                    } else {
+                        favorited = false;
+                        favIcon.style.color = '#ccc';
+                        favCount.textContent = parseInt(favCount.textContent) - 1;
+                    }
+                };
+            }
 
             playerPage.classList.add('active');
             if (!isLandscape && window.innerWidth > 768) {
