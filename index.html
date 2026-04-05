@@ -1097,29 +1097,38 @@
     height: 100%;
     object-fit: cover;
 }
-.player-right {
-    flex: 1;
-    min-width: 200px;
-    position: relative;
-    padding-left: 40px;
-    display: flex;
-    flex-direction: column;
-}
-.player-right::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #444;
-}
-.player-right-content {
-    flex: 1;
-    padding-right: 10px;
+            .player-right {
+                flex: 1;
+                min-width: 200px;
+                position: relative;
+                padding-left: 40px;
+                min-height: 100vh;
+            }
+                .player-right {
+    height: calc(100vh - 60px);
     overflow-y: auto;
 }
-#playerPage {
+            .player-right::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 2px;
+                background: #444;
+            }
+            .player-right-content {
+                overflow-y: auto;
+                max-height: calc(100vh - 60px);
+                padding-right: 10px;
+            }
+                .player-right-content::after {
+    content: '';
+    display: block;
+    height: calc(100vh - 60px);
+    min-height: 1px;
+}
+                #playerPage {
     height: 100vh;
     overflow: hidden;
 }
@@ -1226,6 +1235,7 @@
                     })(i);
                     episodeGrid.appendChild(btn);
                 }
+                
                 function renderPageButtons() {
                     const container = document.querySelector('.page-buttons');
                     if (!container) return;
@@ -1255,14 +1265,11 @@
 
             function switchEpisode(ep) {
                 currentEpisode = ep;
-                // 更新面包屑和标题
                 const breadcrumb = document.querySelector('.breadcrumb');
                 const title = document.querySelector('.player-right-content h2');
                 if (breadcrumb) breadcrumb.innerHTML = `${categoryName} / ${movieName} / 第${ep}集`;
                 if (title) title.innerHTML = `第${ep}集 · ${movieName}`;
-                // 重新渲染集数列表（更新高亮）
                 renderEpisodeList();
-                // 这里可以添加切换视频源的逻辑
             }
 
             // 页码点击事件
