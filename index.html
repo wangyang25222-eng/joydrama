@@ -1097,31 +1097,29 @@
     height: 100%;
     object-fit: cover;
 }
-            .player-right {
-                flex: 1;
-                min-width: 200px;
-                position: relative;
-                padding-left: 40px;
-            }
-                .player-right {
-    height: calc(100vh - 60px);
+.player-right {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+    padding-left: 40px;
+    display: flex;
+    flex-direction: column;
+}
+.player-right::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #444;
+}
+.player-right-content {
+    flex: 1;
+    padding-right: 10px;
     overflow-y: auto;
 }
-            .player-right::before {
-                content: '';
-                position: absolute;
-                left: 0;
-                top: 0;
-                bottom: 0;
-                width: 2px;
-                background: #444;
-            }
-            .player-right-content {
-                overflow-y: auto;
-                max-height: calc(100vh - 100px);
-                padding-right: 10px;
-            }
-                #playerPage {
+#playerPage {
     height: 100vh;
     overflow: hidden;
 }
@@ -1188,11 +1186,10 @@
     </button>
 </div>
     <!-- 分页控件（集数页面切换） -->
-    <div class="episode-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <button class="page-prev" style="background: #333; border: none; padding: 4px 12px; border-radius: 4px; color: white; cursor: pointer;">上一页</button>
-        <span class="page-info" style="color: #aaa;">1-50 / 共60集</span>
-        <button class="page-next" style="background: #333; border: none; padding: 4px 12px; border-radius: 4px; color: white; cursor: pointer;">下一页</button>
-    </div>
+<div class="episode-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <div class="page-buttons" style="display: flex; gap: 12px;"></div>
+    <span class="page-total" style="color: #aaa;">共60集</span>
+</div>
     <!-- 集数列表 -->
     <div class="episode-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
         <!-- 集数按钮会动态生成 -->
@@ -1229,10 +1226,31 @@
                     })(i);
                     episodeGrid.appendChild(btn);
                 }
+                function renderPageButtons() {
+                    const container = document.querySelector('.page-buttons');
+                    if (!container) return;
+                    container.innerHTML = '';
+                    for (let i = 1; i <= totalPages; i++) {
+                        const start = (i - 1) * episodesPerPage + 1;
+                        const end = Math.min(i * episodesPerPage, totalEpisodes);
+                        const btn = document.createElement('span');
+                        btn.textContent = `${start}-${end}`;
+                        btn.className = 'page-btn';
+                        btn.dataset.page = i;
+                        btn.style.cssText = `cursor: pointer; color: ${i === episodePage ? '#e63946' : '#aaa'}; padding: 4px 8px;`;
+                        btn.onclick = () => {
+                            episodePage = i;
+                            renderEpisodeList();
+                            renderPageButtons();
+                        };
+                        container.appendChild(btn);
+                    }
+                }
 
-                // 更新分页信息
-                const pageInfo = document.querySelector('.page-info');
-                if (pageInfo) pageInfo.textContent = `${start}-${end} / 共${totalEpisodes}集`;
+                // 更新总集数
+                const totalSpan = document.querySelector('.page-total');
+                if (totalSpan) totalSpan.textContent = `共${totalEpisodes}集`;
+                renderPageButtons();
             }
 
             function switchEpisode(ep) {
@@ -1247,25 +1265,18 @@
                 // 这里可以添加切换视频源的逻辑
             }
 
-            // 分页按钮事件
-            const prevBtn = document.querySelector('.page-prev');
-            const nextBtn = document.querySelector('.page-next');
-            if (prevBtn) {
-                prevBtn.onclick = () => {
-                    if (episodePage > 1) {
-                        episodePage--;
-                        renderEpisodeList();
-                    }
+            // 页码点击事件
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.onclick = () => {
+                    episodePage = parseInt(btn.dataset.page);
+                    renderEpisodeList();
+                    // 更新按钮颜色
+                    document.querySelectorAll('.page-btn').forEach(b => {
+                        b.style.color = '#aaa';
+                    });
+                    btn.style.color = '#e63946';
                 };
-            }
-            if (nextBtn) {
-                nextBtn.onclick = () => {
-                    if (episodePage < totalPages) {
-                        episodePage++;
-                        renderEpisodeList();
-                    }
-                };
-            }
+            });
 
             // 初始化
             renderEpisodeList();
