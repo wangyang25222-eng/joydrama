@@ -41,6 +41,18 @@
             transform: scaleX(0.6) translateX(-5px) translateY(-2px);
         }
 
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            50% {
+                transform: scaleY(1.5);
+            }
+        }
+
         .slide-info {
             position: absolute;
             bottom: 100px;
@@ -1222,30 +1234,30 @@
     </div>
 <div style="border-top: 1px solid #444; padding-top: 16px;">
     <div style="display: flex; justify-content: space-around; align-items: center;">
-<!-- 微博 -->
-<button class="share-platform" data-platform="weibo" style="background: none; border: none; cursor: pointer; text-align: center;">
-    <span class="fa-stack fa-lg">
-        <i class="fas fa-circle fa-stack-2x" style="color: #e71f19;"></i>
-        <i class="fab fa-weibo fa-stack-1x fa-inverse" style="color: white;"></i>
-    </span>
-    <div style="color: #aaa; font-size: 12px; margin-top: 6px;">微博</div>
-</button>
-<!-- Facebook -->
-<button class="share-platform" data-platform="facebook" style="background: none; border: none; cursor: pointer; text-align: center;">
-    <span class="fa-stack fa-lg">
-        <i class="fas fa-circle fa-stack-2x" style="color: #1877f2;"></i>
-        <i class="fab fa-facebook-f fa-stack-1x fa-inverse" style="color: white;"></i>
-    </span>
-    <div style="color: #aaa; font-size: 12px; margin-top: 6px;">Facebook</div>
-</button>
-<!-- 复制链接 -->
-<button class="share-platform" data-platform="copy" style="background: none; border: none; cursor: pointer; text-align: center;">
-    <span class="fa-stack fa-lg">
-        <i class="fas fa-circle fa-stack-2x" style="color: #555;"></i>
-        <i class="fas fa-link fa-stack-1x fa-inverse" style="color: white;"></i>
-    </span>
-    <div style="color: #aaa; font-size: 12px; margin-top: 6px;">链接</div>
-</button>
+        <!-- 微博 -->
+        <button id="shareWeibo" class="share-platform" style="background: none; border: none; cursor: pointer; text-align: center;">
+            <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x" style="color: #e71f19;"></i>
+                <i class="fab fa-weibo fa-stack-1x fa-inverse" style="color: white;"></i>
+            </span>
+            <div style="color: #aaa; font-size: 12px; margin-top: 6px;">微博</div>
+        </button>
+        <!-- Facebook -->
+        <button id="shareFacebook" class="share-platform" style="background: none; border: none; cursor: pointer; text-align: center;">
+            <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x" style="color: #1877f2;"></i>
+                <i class="fab fa-facebook-f fa-stack-1x fa-inverse" style="color: white;"></i>
+            </span>
+            <div style="color: #aaa; font-size: 12px; margin-top: 6px;">Facebook</div>
+        </button>
+        <!-- 复制链接 -->
+        <button id="shareCopy" class="share-platform" style="background: none; border: none; cursor: pointer; text-align: center;">
+            <span class="fa-stack fa-lg">
+                <i class="fas fa-circle fa-stack-2x" style="color: #555;"></i>
+                <i class="fas fa-link fa-stack-1x fa-inverse" style="color: white;"></i>
+            </span>
+            <div style="color: #aaa; font-size: 12px; margin-top: 6px;">链接</div>
+        </button>
     </div>
 </div>
 </div>
@@ -1275,6 +1287,65 @@
                     if (e.target === modal) modal.style.display = 'none';
                 };
             }
+
+            // --- 新增分享功能 ---
+            // 辅助函数：获取当前分享链接 (以后需要改成真实影片链接)
+            function getShareUrl() {
+                // 先临时使用当前页面URL，以后可替换为: `https://yourdomain.com/movie/${movieId}`
+                return window.location.href;
+            }
+
+            // 辅助函数：获取分享文案
+            function getShareText() {
+                const titleElem = document.getElementById('shareTitle');
+                const descElem = document.getElementById('shareDesc');
+                const title = titleElem ? titleElem.innerText : 'Joy Drama';
+                const desc = descElem ? descElem.innerText : '精彩短剧，尽在Joy Drama';
+                return `${title}\n${desc}`;
+            }
+
+            // 1. 微博分享
+            const weiboBtn = document.getElementById('shareWeibo');
+            if (weiboBtn) {
+                weiboBtn.onclick = () => {
+                    const url = getShareUrl();
+                    const text = getShareText();
+                    // 微博分享接口
+                    const shareUrl = `http://service.weibo.com/share/share.php?title=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+                    window.open(shareUrl, '_blank', 'width=600,height=400');
+                };
+            }
+
+            // 2. Facebook 分享
+            const facebookBtn = document.getElementById('shareFacebook');
+            if (facebookBtn) {
+                facebookBtn.onclick = () => {
+                    const url = getShareUrl();
+                    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+                    window.open(shareUrl, '_blank', 'width=600,height=400');
+                };
+            }
+
+            // 3. 复制链接
+            const copyBtn = document.getElementById('shareCopy');
+            if (copyBtn) {
+                copyBtn.onclick = async () => {
+                    const url = getShareUrl();
+                    try {
+                        await navigator.clipboard.writeText(url);
+                        alert('链接已复制，快去分享吧！');
+                    } catch (err) {
+                        // 降级方案
+                        const textarea = document.createElement('textarea');
+                        textarea.value = url;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        alert('链接已复制，快去分享吧！');
+                    }
+                };
+            }
             // 集数数据（共60集）
             const totalEpisodes = 60;
             let currentEpisode = 1;
@@ -1293,10 +1364,24 @@
                     const btn = document.createElement('button');
                     btn.textContent = i;
                     btn.className = 'episode-btn';
-                    btn.style.cssText = 'background: #333; border: none; padding: 8px 0; border-radius: 6px; color: white; cursor: pointer;';
+                    btn.style.cssText = 'background: #333; border: none; padding: 0; border-radius: 6px; color: white; cursor: pointer; aspect-ratio: 4 / 3; width: 100%; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center;';
                     if (i === currentEpisode) {
-                        btn.style.background = '#e63946';
+                        btn.style.background = 'linear-gradient(135deg, #9b2c2c, #6b21a5, #4a0e4e)';
                         btn.style.fontWeight = 'bold';
+                        btn.style.transform = 'translateY(-2px)';
+                        btn.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                        btn.style.display = 'flex';
+                        btn.style.alignItems = 'center';
+                        btn.style.justifyContent = 'center';
+                        btn.style.position = 'relative';
+                        btn.style.gap = '6px';
+                        // 添加音频条 HTML
+                        btn.innerHTML = `${i}
+    <div style="display: flex; gap: 2px; align-items: center; position: absolute; bottom: 4px; right: 6px;">
+        <span style="width: 2px; height: 6px; background: white; display: inline-block; animation: wave 0.8s ease infinite;"></span>
+        <span style="width: 2px; height: 10px; background: white; display: inline-block; animation: wave 0.8s ease 0.2s infinite;"></span>
+        <span style="width: 2px; height: 8px; background: white; display: inline-block; animation: wave 0.8s ease 0.4s infinite;"></span>
+    </div>`;
                     }
                     btn.onclick = (function (ep) {
                         return function () { switchEpisode(ep); };
