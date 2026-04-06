@@ -1186,13 +1186,13 @@
     <i class="fas fa-star" style="font-size: 32px; color: #ccc;"></i>
     <div class="fav-count" style="color: #aaa; font-size: 14px; margin-top: 4px;">0</div>
 </button>
-    <!-- 分享 -->
-    <button class="share-btn" style="background: none; border: none; cursor: pointer; text-align: center;">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="#cccccc" stroke="#cccccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 4.5V8.5C7 9.5 4 14.5 3 20C5.5 16.5 9 15 14 15V19L21.5 11.75L14 4.5Z" />
-        </svg>
-        <div style="color: #cccccc; font-size: 14px; margin-top: -2px;">分享</div>
-    </button>
+<!-- 分享 -->
+<button class="share-btn" data-movie-id="${movieId}" data-movie-name="${movieName}" data-movie-img="${movieImg}" data-movie-desc="被男友联手继妹做局陷害，全网喊打？黎欢笑了。我送外卖只是体验生活，你们还真敢把BOSS当小兵啊？她破局的手段很简单——生死看淡，不服就干。直播打脸渣男、手撕绿茶继妹，三句话让整个家族跪下认主。顺手还捡了个又奶又狠的萧家二少，把他从娱乐圈小透明训练成首富继承人，让他哭着喊着要，姐姐求您娶了我吧！当豪门纷纷求饶、仇人跪地痛哭，黎欢弹了弹烟灰，轻描淡写，“急什么？这才刚开局。" style="background: none; border: none; cursor: pointer; text-align: center;">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="#cccccc" stroke="#cccccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 4.5V8.5C7 9.5 4 14.5 3 20C5.5 16.5 9 15 14 15V19L21.5 11.75L14 4.5Z" />
+    </svg>
+    <div style="color: #cccccc; font-size: 14px; margin-top: -2px;">分享</div>
+</button>
 </div>
     <!-- 分页控件（集数页面切换） -->
 <div class="episode-pagination" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -1206,7 +1206,75 @@
 </div>
             </div>
         </div>
+        <!-- 分享弹窗 -->
+<div id="shareModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center;">
+<div style="background: #1f1f1f; border-radius: 16px; width: 90%; max-width: 500px; padding: 20px; position: relative;">
+    <div style="position: relative; margin-bottom: 16px;">
+    <h3 style="margin: 0; text-align: center;">分享</h3>
+    <button id="closeModal" style="position: absolute; right: 0; top: 0; background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer;">✕</button>
+</div>
+    <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+        <img id="shareImg" src="" style="width: 80px; height: 120px; object-fit: cover; border-radius: 8px;">
+<div style="flex: 1;">
+    <div id="shareTitle" style="font-weight: bold; margin-bottom: 12px;"></div>
+    <div id="shareDesc" style="color: #aaa; font-size: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin-top: 8px;"></div>
+</div>
+    </div>
+<div style="border-top: 1px solid #444; padding-top: 16px;">
+    <div style="display: flex; justify-content: space-around; align-items: center;">
+<!-- 微博 -->
+<button class="share-platform" data-platform="weibo" style="background: none; border: none; cursor: pointer; text-align: center;">
+    <span class="fa-stack fa-lg">
+        <i class="fas fa-circle fa-stack-2x" style="color: #e71f19;"></i>
+        <i class="fab fa-weibo fa-stack-1x fa-inverse" style="color: white;"></i>
+    </span>
+    <div style="color: #aaa; font-size: 12px; margin-top: 6px;">微博</div>
+</button>
+<!-- Facebook -->
+<button class="share-platform" data-platform="facebook" style="background: none; border: none; cursor: pointer; text-align: center;">
+    <span class="fa-stack fa-lg">
+        <i class="fas fa-circle fa-stack-2x" style="color: #1877f2;"></i>
+        <i class="fab fa-facebook-f fa-stack-1x fa-inverse" style="color: white;"></i>
+    </span>
+    <div style="color: #aaa; font-size: 12px; margin-top: 6px;">Facebook</div>
+</button>
+<!-- 复制链接 -->
+<button class="share-platform" data-platform="copy" style="background: none; border: none; cursor: pointer; text-align: center;">
+    <span class="fa-stack fa-lg">
+        <i class="fas fa-circle fa-stack-2x" style="color: #555;"></i>
+        <i class="fas fa-link fa-stack-1x fa-inverse" style="color: white;"></i>
+    </span>
+    <div style="color: #aaa; font-size: 12px; margin-top: 6px;">链接</div>
+</button>
+    </div>
+</div>
+</div>
     `;
+            // 分享弹窗逻辑
+            const shareBtn = document.querySelector('.share-btn');
+            const modal = document.getElementById('shareModal');
+            if (shareBtn && modal) {
+                shareBtn.onclick = () => {
+                    const movieId = shareBtn.dataset.movieId;
+                    const movieName = shareBtn.dataset.movieName;
+                    const movieImg = shareBtn.dataset.movieImg;
+                    const movieDesc = shareBtn.dataset.movieDesc;
+
+                    document.getElementById('shareImg').src = movieImg;
+                    document.getElementById('shareTitle').innerText = movieName;
+                    document.getElementById('shareDesc').innerText = movieDesc;
+
+                    modal.style.display = 'flex';
+                };
+
+                document.getElementById('closeModal').onclick = () => {
+                    modal.style.display = 'none';
+                };
+
+                modal.onclick = (e) => {
+                    if (e.target === modal) modal.style.display = 'none';
+                };
+            }
             // 集数数据（共60集）
             const totalEpisodes = 60;
             let currentEpisode = 1;
@@ -1235,7 +1303,7 @@
                     })(i);
                     episodeGrid.appendChild(btn);
                 }
-                
+
                 function renderPageButtons() {
                     const container = document.querySelector('.page-buttons');
                     if (!container) return;
