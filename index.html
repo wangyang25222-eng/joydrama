@@ -126,6 +126,25 @@
             z-index: 2;
         }
 
+        /* 音量滑块垂直样式 */
+        .volume-slider {
+            background: #333;
+            border-radius: 2px;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+        }
+
+        .volume-slider:focus {
+            outline: none;
+        }
+
         .lang-item {
             padding: 8px 12px;
             cursor: pointer;
@@ -1225,9 +1244,14 @@
     </button>
     <span class="time-display" style="color: white; font-size: 12px; margin-left: 40px;">00:00 / 01:00</span>
     <div style="flex: 1;"></div>
+<div class="volume-container" style="position: relative; display: inline-block;">
+    <div class="volume-slider-container" style="position: absolute; bottom: 35px; left: 50%; transform: translateX(-50%); background: rgba(50,50,50,0.95); padding: 13px 14px; border-radius: 8px; display: none; flex-direction: column; align-items: center; z-index: 20;">
+        <input type="range" class="volume-slider" min="0" max="1" step="0.01" value="1" orient="vertical" style="width: 4px; height: 80px; writing-mode: bt-lr; -webkit-appearance: slider-vertical; cursor: pointer; background: #333; border-radius: 2px;">
+    </div>
     <button class="volume-btn" style="background: none; border: none; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-right: -5px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M3 9v6h4l5 5V4L7 9H3z" /><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" /></svg>
     </button>
+</div>
     <button class="fullscreen-btn" style="background: none; border: none; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-right: 20px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" /></svg>
     </button>
@@ -1597,14 +1621,14 @@
                 video.addEventListener('loadedmetadata', () => {
                     const minutes = Math.floor(video.duration / 60);
                     const seconds = Math.floor(video.duration % 60);
-                    timeDisplay.textContent = `00:00 / ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    timeDisplay.innerHTML = `00:00 <span style="color: #888;">/ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</span>`;
                 });
                 video.addEventListener('timeupdate', () => {
                     const currentMin = Math.floor(video.currentTime / 60);
                     const currentSec = Math.floor(video.currentTime % 60);
                     const durationMin = Math.floor(video.duration / 60);
                     const durationSec = Math.floor(video.duration % 60);
-                    timeDisplay.textContent = `${currentMin.toString().padStart(2, '0')}:${currentSec.toString().padStart(2, '0')} / ${durationMin.toString().padStart(2, '0')}:${durationSec.toString().padStart(2, '0')}`;
+                    timeDisplay.innerHTML = `${currentMin.toString().padStart(2, '0')}:${currentSec.toString().padStart(2, '0')} <span style="color: #888;">/ ${durationMin.toString().padStart(2, '0')}:${durationSec.toString().padStart(2, '0')}</span>`;
 
                     // 更新红色进度条
                     const progressFill = document.querySelector('.progress-fill');
@@ -1671,6 +1695,80 @@
                         playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
                     }
                 };
+            }
+            // 下一集按钮
+            const nextBtn = document.querySelector('.next-btn');
+            if (nextBtn) {
+                nextBtn.onclick = () => {
+                    if (currentEpisode < totalEpisodes) {
+                        switchEpisode(currentEpisode + 1);
+                    }
+                };
+            }
+            // 音量控制
+            const volumeContainer = document.querySelector('.volume-container');
+            const volumeSliderContainer = document.querySelector('.volume-slider-container');
+            const volumeSlider = document.querySelector('.volume-slider');
+            const volumeBtn = document.querySelector('.volume-btn');
+
+            let volumeHideTimer;
+
+            function showVolumeSlider() {
+                if (volumeSliderContainer) {
+                    volumeSliderContainer.style.display = 'flex';
+                    clearTimeout(volumeHideTimer);
+                }
+            }
+
+            function startHideTimer() {
+                clearTimeout(volumeHideTimer);
+                volumeHideTimer = setTimeout(() => {
+                    if (volumeSliderContainer) volumeSliderContainer.style.display = 'none';
+                }, 500);
+            }
+
+            function cancelHideTimer() {
+                clearTimeout(volumeHideTimer);
+            }
+
+            if (volumeContainer && volumeSliderContainer) {
+                volumeContainer.addEventListener('mouseenter', showVolumeSlider);
+                volumeContainer.addEventListener('mouseleave', startHideTimer);
+                // 鼠标移到滑块上时取消隐藏
+                volumeSliderContainer.addEventListener('mouseenter', cancelHideTimer);
+                volumeSliderContainer.addEventListener('mouseleave', startHideTimer);
+            }
+
+            if (volumeSlider && video) {
+                video.volume = 0.3;
+                volumeSlider.value = video.volume;
+                volumeSlider.addEventListener('input', (e) => {
+                    const val = parseFloat(e.target.value);
+                    video.volume = val;
+                    // 可选：改变音量图标
+                    const svgPath = volumeBtn.querySelector('svg path');
+                    if (svgPath) {
+                        if (val === 0) {
+                            // 静音图标可以后续优化
+                        }
+                    }
+                });
+            }
+
+            // 点击音量图标静音/恢复
+            if (volumeBtn && video) {
+                volumeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (video.volume > 0) {
+                        video.dataset.prevVolume = video.volume;
+                        video.volume = 0;
+                        if (volumeSlider) volumeSlider.value = 0;
+                    } else {
+                        const prev = parseFloat(video.dataset.prevVolume || 1);
+                        video.volume = prev;
+                        if (volumeSlider) volumeSlider.value = prev;
+                    }
+                });
             }
 
             playerPage.classList.add('active');
