@@ -1624,17 +1624,27 @@
                 }
             });
             video.addEventListener('ended', () => {
-                if (currentEpisode < totalEpisodes) {
-                    // 自动下一集
-                    switchEpisode(currentEpisode + 1);
-                    // 延迟后重新播放视频（测试视频不变）
-                    setTimeout(() => {
+                if (totalEpisodes === 1) {
+                    // 只有一集，停止自动播放，按钮变为播放图标
+                    playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+                    // 用户点击按钮时重播
+                    playPauseBtn.onclick = () => {
+                        video.currentTime = 0;
                         video.play();
-                    }, 100);
+                        playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                    };
+                } else if (currentEpisode < totalEpisodes) {
+                    // 多集且非最后一集，自动下一集
+                    switchEpisode(currentEpisode + 1);
+                    setTimeout(() => video.play(), 100);
                 } else {
-                    // 最后一集，重播
-                    video.currentTime = 0;
-                    video.play();
+                    // 最后一集，停止播放，按钮变播放图标
+                    playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+                    playPauseBtn.onclick = () => {
+                        video.currentTime = 0;
+                        video.play();
+                        playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                    };
                 }
             });
 
