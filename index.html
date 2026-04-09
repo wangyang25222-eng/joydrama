@@ -126,7 +126,6 @@
             z-index: 2;
         }
 
-        /* 音量滑块垂直样式 */
         .volume-slider {
             background: #333;
             border-radius: 2px;
@@ -685,13 +684,14 @@
             display: none;
         }
 
+
         @media (max-width: 768px) {
             .bottom-nav {
                 display: flex;
             }
 
             .player-controls {
-                bottom: 0 !important;
+                bottom: 0
             }
 
             .player-left-inner {
@@ -1712,6 +1712,91 @@
             const volumeBtn = document.querySelector('.volume-btn');
 
             let volumeHideTimer;
+            // 全屏功能
+            const fullscreenBtn = document.querySelector('.fullscreen-btn');
+            const playerLeftContainer = document.querySelector('.player-left');
+            const playerRightContainer = document.querySelector('.player-right');
+            const playerLeftInner = document.querySelector('.player-left-inner');
+            const playerControls = document.querySelector('.player-controls');
+
+            let originalLeftHeight = '';
+            let originalLeftInnerHeight = '';
+
+            function toggleFullscreen() {
+                if (!document.fullscreenElement) {
+                    // 保存原始样式（改为保存计算后的实际高度）
+                    originalLeftHeight = playerLeftContainer.offsetHeight + 'px';
+                    originalLeftInnerHeight = playerLeftInner.offsetHeight + 'px';
+
+                    // 设置全屏样式
+                    playerLeftContainer.style.height = '100vh';
+                    playerLeftContainer.style.position = 'fixed';
+                    playerLeftContainer.style.top = '0';
+                    playerLeftContainer.style.left = '0';
+                    playerLeftContainer.style.width = '100%';
+                    playerLeftContainer.style.zIndex = '9999';
+                    playerLeftContainer.style.background = '#000';
+
+                    playerLeftInner.style.height = '100vh';
+
+                    // 控件固定在底部
+                    if (playerControls) {
+                        playerControls.style.position = 'fixed';
+                        playerControls.style.bottom = '0';
+                        playerControls.style.left = '0';
+                        playerControls.style.right = '0';
+                        playerControls.style.zIndex = '10000';
+                    }
+
+                    if (playerRightContainer) playerRightContainer.style.display = 'none';
+
+                    // 请求全屏
+                    document.documentElement.requestFullscreen();
+                } else {
+                    document.exitFullscreen();
+                }
+            }
+
+            if (fullscreenBtn) {
+                fullscreenBtn.onclick = toggleFullscreen;
+            }
+
+            document.addEventListener('fullscreenchange', () => {
+                if (!document.fullscreenElement) {
+                    // 退出全屏：恢复原始样式
+                    playerLeftContainer.style.height = originalLeftHeight;
+                    playerLeftContainer.style.position = '';
+                    playerLeftContainer.style.top = '';
+                    playerLeftContainer.style.width = '';
+                    playerLeftContainer.style.zIndex = '';
+                    playerLeftContainer.style.background = '';
+
+                    playerLeftInner.style.height = originalLeftInnerHeight;
+                    playerLeftInner.style.overflow = '';
+                    playerLeftContainer.style.overflow = '';
+
+                    if (playerControls) {
+                        playerControls.style.position = 'absolute';
+                        playerControls.style.left = '0';
+                        playerControls.style.right = '0';
+                        playerControls.style.zIndex = '99999';
+                        playerControls.style.opacity = '1';
+                        playerControls.style.justifyContent = 'flex-end';
+
+                        clearTimeout(hideTimer);
+                        hideTimer = setTimeout(() => {
+                            if (playerControls) playerControls.style.opacity = '0';
+                        }, 3000);
+                    }
+
+                    if (playerRightContainer) playerRightContainer.style.display = '';
+
+                    // 强制刷新布局
+                    setTimeout(() => {
+                        window.dispatchEvent(new Event('resize'));
+                    }, 50);
+                }
+            });
 
             function showVolumeSlider() {
                 if (volumeSliderContainer) {
