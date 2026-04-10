@@ -1763,6 +1763,10 @@
 
             document.addEventListener('fullscreenchange', () => {
                 if (!document.fullscreenElement) {
+                    // 退出全屏：显示"展开"图标（向外箭头）
+                    if (fullscreenBtn) {
+                        fullscreenBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>`;
+                    }
                     // 退出全屏：恢复原始样式
                     playerLeftContainer.style.height = originalLeftHeight;
                     playerLeftContainer.style.position = '';
@@ -1797,9 +1801,14 @@
                         window.dispatchEvent(new Event('resize'));
                         window.scrollTo(0, document.body.scrollHeight);
                         setTimeout(() => {
-                        window.scrollTo(0, 0);
+                            window.scrollTo(0, 0);
                         }, 10);
                     }, 50);
+                } else {
+                    // 进入全屏：显示"压缩"图标（向内箭头）
+                    if (fullscreenBtn) {
+                        fullscreenBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>`;
+                    }
                 }
             });
 
