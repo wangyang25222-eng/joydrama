@@ -1782,6 +1782,7 @@
                         playerControls.style.zIndex = '99999';
                         playerControls.style.opacity = '1';
                         playerControls.style.justifyContent = 'flex-end';
+                        playerControls.style.bottom = isLandscape ? '0px' : '20px';
 
                         clearTimeout(hideTimer);
                         hideTimer = setTimeout(() => {
@@ -1794,6 +1795,10 @@
                     // 强制刷新布局
                     setTimeout(() => {
                         window.dispatchEvent(new Event('resize'));
+                        window.scrollTo(0, document.body.scrollHeight);
+                        setTimeout(() => {
+                        window.scrollTo(0, 0);
+                        }, 10);
                     }, 50);
                 }
             });
