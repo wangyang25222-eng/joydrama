@@ -1226,7 +1226,10 @@
         <div class="player-container">
             <div class="player-left">
 <div class="player-left-inner" style="${isLandscape ? 'width:100%; height:100%; max-height:100%;' : 'aspect-ratio:9/16;'}">
-<video id="videoPlayer" src="https://www.w3schools.com/html/mov_bbb.mp4" preload="auto" style="width: 100%; height: 100%; object-fit: cover; object-position: center center; transform: translateZ(0);"></video>
+    <video id="videoPlayer" src="https://www.w3schools.com/html/mov_bbb.mp4" preload="auto" style="width: 100%; height: 100%; object-fit: cover; object-position: center center; transform: translateZ(0);"></video>
+    <div class="center-play-btn" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: rgba(0,0,0,0.6); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 15;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="white" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    </div>
 <!-- 播放器控件 -->
 <div class="player-controls" style="position: absolute; bottom: 20px; left: 0; right: 0; background: rgba(0,0,0,0.6); padding: 8px 0 8px 0; display: flex; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.3s; z-index: 10;">
     <!-- 进度条 -->
@@ -1622,6 +1625,20 @@
                     const minutes = Math.floor(video.duration / 60);
                     const seconds = Math.floor(video.duration % 60);
                     timeDisplay.innerHTML = `00:00 <span style="color: #888;">/ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</span>`;
+                    video.play();
+                    const playPauseBtn = document.querySelector('.play-pause-btn');
+                    if (playPauseBtn) {
+                        playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                    }
+                });
+                const centerPlayBtn = document.querySelector('.center-play-btn');
+
+                video.addEventListener('play', () => {
+                    if (centerPlayBtn) centerPlayBtn.style.display = 'none';
+                });
+
+                video.addEventListener('pause', () => {
+                    if (centerPlayBtn) centerPlayBtn.style.display = 'flex';
                 });
                 video.addEventListener('timeupdate', () => {
                     const currentMin = Math.floor(video.currentTime / 60);
@@ -1651,12 +1668,6 @@
                 if (totalEpisodes === 1) {
                     // 只有一集，停止自动播放，按钮变为播放图标
                     playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
-                    // 用户点击按钮时重播
-                    playPauseBtn.onclick = () => {
-                        video.currentTime = 0;
-                        video.play();
-                        playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
-                    };
                 } else if (currentEpisode < totalEpisodes) {
                     // 多集且非最后一集，自动下一集
                     switchEpisode(currentEpisode + 1);
@@ -1686,7 +1697,8 @@
             // 播放/暂停
             const playPauseBtn = document.querySelector('.play-pause-btn');
             if (video && playPauseBtn) {
-                playPauseBtn.onclick = () => {
+                playPauseBtn.onclick = (e) => {
+                    e.stopPropagation();
                     if (video.paused) {
                         video.play();
                         playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
@@ -1718,6 +1730,27 @@
             const playerRightContainer = document.querySelector('.player-right');
             const playerLeftInner = document.querySelector('.player-left-inner');
             const playerControls = document.querySelector('.player-controls');
+            if (playerLeftInner) {
+                playerLeftInner.addEventListener('click', (e) => {
+                    if (e.target.closest('.player-controls')) {
+                        return;
+                    }
+
+                    if (video.paused) {
+                        video.play();
+                        const playPauseBtn = document.querySelector('.play-pause-btn');
+                        if (playPauseBtn) {
+                            playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                        }
+                    } else {
+                        video.pause();
+                        const playPauseBtn = document.querySelector('.play-pause-btn');
+                        if (playPauseBtn) {
+                            playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+                        }
+                    }
+                });
+            }
 
             let originalLeftHeight = '';
             let originalLeftInnerHeight = '';
