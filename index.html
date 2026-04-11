@@ -105,6 +105,30 @@
             z-index: 100;
         }
 
+        /* 集数锁图标样式 */
+        .episode-btn {
+            position: relative;
+        }
+
+        .episode-lock {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 16px;
+            height: 16px;
+            background: #e63946;
+            border-radius: 0 4px 0 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .episode-lock svg {
+            width: 10px;
+            height: 10px;
+        }
+
         .progress-container {
             position: relative;
         }
@@ -1230,6 +1254,11 @@
     <div class="center-play-btn" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: rgba(0,0,0,0.6); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 15;">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="white" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
     </div>
+    <div class="player-lock-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 20;">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="white"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+    <p style="color: white; margin: 16px 0; font-size: 16px;">这是付费剧集，请解锁后观看</p>
+    <button class="unlock-btn" style="background: #e63946; border: none; padding: 10px 30px; border-radius: 30px; color: white; font-size: 16px; cursor: pointer;">立即解锁</button>
+</div>
 <!-- 播放器控件 -->
 <div class="player-controls" style="position: absolute; bottom: 20px; left: 0; right: 0; background: rgba(0,0,0,0.6); padding: 8px 0 8px 0; display: flex; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.3s; z-index: 10;">
     <!-- 进度条 -->
@@ -1436,6 +1465,7 @@
             }
             // 集数数据（共60集）
             const totalEpisodes = 60;
+            const freeUntilEpisode = 10;
             let currentEpisode = 1;
             let episodePage = 1;
             const episodesPerPage = 50;
@@ -1450,29 +1480,49 @@
                 episodeGrid.innerHTML = '';
                 for (let i = start; i <= end; i++) {
                     const btn = document.createElement('button');
-                    btn.textContent = i;
                     btn.className = 'episode-btn';
-                    btn.style.cssText = 'background: #333; border: none; padding: 0; border-radius: 6px; color: white; cursor: pointer; aspect-ratio: 4 / 3; width: 100%; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center;';
+                    btn.style.cssText = 'background: #333; border: none; padding: 0; border-radius: 6px; color: white; cursor: pointer; aspect-ratio: 4 / 3; width: 100%; font-size: 16px; font-weight: bold; display: flex; align-items: center; justify-content: center; position: relative;';
+
+                    // 判断是否付费集数
+                    const isLocked = i > freeUntilEpisode;
+
                     if (i === currentEpisode) {
                         btn.style.background = 'linear-gradient(135deg, #9b2c2c, #6b21a5, #4a0e4e)';
                         btn.style.fontWeight = 'bold';
                         btn.style.transform = 'translateY(-2px)';
                         btn.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-                        btn.style.display = 'flex';
-                        btn.style.alignItems = 'center';
-                        btn.style.justifyContent = 'center';
-                        btn.style.position = 'relative';
                         btn.style.gap = '6px';
-                        // 添加音频条 HTML
-                        btn.innerHTML = `${i}
+
+                        if (isLocked) {
+                            btn.innerHTML = `${i}<div class="episode-lock"><svg viewBox="0 0 24 24" fill="white" width="12" height="12"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>
     <div style="display: flex; gap: 2px; align-items: center; position: absolute; bottom: 4px; right: 6px;">
         <span style="width: 2px; height: 6px; background: white; display: inline-block; animation: wave 0.8s ease infinite;"></span>
         <span style="width: 2px; height: 10px; background: white; display: inline-block; animation: wave 0.8s ease 0.2s infinite;"></span>
         <span style="width: 2px; height: 8px; background: white; display: inline-block; animation: wave 0.8s ease 0.4s infinite;"></span>
     </div>`;
+                        } else {
+                            btn.innerHTML = `${i}
+    <div style="display: flex; gap: 2px; align-items: center; position: absolute; bottom: 4px; right: 6px;">
+        <span style="width: 2px; height: 6px; background: white; display: inline-block; animation: wave 0.8s ease infinite;"></span>
+        <span style="width: 2px; height: 10px; background: white; display: inline-block; animation: wave 0.8s ease 0.2s infinite;"></span>
+        <span style="width: 2px; height: 8px; background: white; display: inline-block; animation: wave 0.8s ease 0.4s infinite;"></span>
+    </div>`;
+                        }
+                    } else {
+                        if (isLocked) {
+                            btn.innerHTML = `${i}<div class="episode-lock"><svg viewBox="0 0 24 24" fill="white" width="12" height="12"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>`;
+                        } else {
+                            btn.innerHTML = `${i}`;
+                        }
                     }
+
                     btn.onclick = (function (ep) {
-                        return function () { switchEpisode(ep); };
+                        return function () {
+                            switchEpisode(ep);
+                            if (ep > freeUntilEpisode) {
+                                showPayModal(ep);
+                            }
+                        };
                     })(i);
                     episodeGrid.appendChild(btn);
                 }
@@ -1506,6 +1556,48 @@
 
             function switchEpisode(ep) {
                 currentEpisode = ep;
+
+                // 判断是否付费集数
+                const isLocked = ep > freeUntilEpisode;
+                // 绑定锁定界面的解锁按钮
+                const unlockBtn = document.querySelector('.unlock-btn');
+                if (unlockBtn) {
+                    unlockBtn.onclick = () => {
+                        showPayModal(currentEpisode);
+                    };
+                }
+                const lockOverlay = document.querySelector('.player-lock-overlay');
+                const playerControls = document.querySelector('.player-controls');
+
+                if (isLocked) {
+                    // 付费集数：显示锁定界面，暂停视频，隐藏控件
+                    if (lockOverlay) lockOverlay.style.display = 'flex';
+                    if (playerControls) {
+                        playerControls.style.display = 'none';
+                        clearTimeout(hideTimer);
+                    }
+                    const centerPlayBtn = document.querySelector('.center-play-btn');
+                    if (centerPlayBtn) centerPlayBtn.style.display = 'none';
+                    video.pause();
+                    video.src = video.src;  // 强制重载当前视频
+                    video.load();
+                    video.currentTime = 0;
+                    // 更新面包屑和标题（但不播放）
+                    const breadcrumb = document.querySelector('.breadcrumb');
+                    const title = document.querySelector('.player-right-content h2');
+                    if (breadcrumb) breadcrumb.innerHTML = `<span onclick="switchTo('categoryPage'); renderCategoryPage('${categoryName}');" style="cursor: pointer; color: #e63946;">${categoryName}</span> / ${movieName} / 第${ep}集`;
+                    if (title) title.innerHTML = `第${ep}集 · ${movieName}`;
+                    renderEpisodeList();
+                    return;
+                }
+
+                // 免费集数：隐藏锁定界面，正常播放
+                if (lockOverlay) lockOverlay.style.display = 'none';
+                if (playerControls) {
+                    playerControls.style.display = 'flex';
+                    playerControls.style.opacity = '1';
+                }
+
                 const breadcrumb = document.querySelector('.breadcrumb');
                 const title = document.querySelector('.player-right-content h2');
                 if (breadcrumb) breadcrumb.innerHTML = `<span onclick="switchTo('categoryPage'); renderCategoryPage('${categoryName}');" style="cursor: pointer; color: #e63946;">${categoryName}</span> / ${movieName} / 第${ep}集`;
@@ -1596,6 +1688,7 @@
             }
 
             function showControls() {
+                if (currentEpisode > freeUntilEpisode) return;
                 if (controls) {
                     controls.style.opacity = '1';
                     clearTimeout(hideTimer);
@@ -1606,6 +1699,7 @@
             }
 
             function hideControls() {
+                if (currentEpisode > freeUntilEpisode) return;
                 if (controls) {
                     controls.style.opacity = '0';
                     clearTimeout(hideTimer);
@@ -1625,7 +1719,9 @@
                     const minutes = Math.floor(video.duration / 60);
                     const seconds = Math.floor(video.duration % 60);
                     timeDisplay.innerHTML = `00:00 <span style="color: #888;">/ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</span>`;
-                    video.play();
+                    if (currentEpisode <= freeUntilEpisode) {
+                        video.play();
+                    }
                     const playPauseBtn = document.querySelector('.play-pause-btn');
                     if (playPauseBtn) {
                         playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
@@ -1669,9 +1765,12 @@
                     // 只有一集，停止自动播放，按钮变为播放图标
                     playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
                 } else if (currentEpisode < totalEpisodes) {
-                    // 多集且非最后一集，自动下一集
-                    switchEpisode(currentEpisode + 1);
-                    setTimeout(() => video.play(), 100);
+                    // 多集且非最后一集，自动下一集（仅当下集免费时）
+                    if (currentEpisode + 1 <= freeUntilEpisode) {
+                        switchEpisode(currentEpisode + 1);
+                        setTimeout(() => video.play(), 100);
+                    }
+                    // 如果下一集付费，不自动播放，停留在当前集
                 } else {
                     // 最后一集，停止播放，按钮变播放图标
                     playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
@@ -1699,6 +1798,7 @@
             if (video && playPauseBtn) {
                 playPauseBtn.onclick = (e) => {
                     e.stopPropagation();
+                    if (currentEpisode > freeUntilEpisode) return;
                     if (video.paused) {
                         video.play();
                         playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
@@ -1724,6 +1824,43 @@
             const volumeBtn = document.querySelector('.volume-btn');
 
             let volumeHideTimer;
+            // 付费弹窗
+            function showPayModal(episodeNum) {
+                // 创建遮罩层
+                const modal = document.createElement('div');
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 20000; display: flex; align-items: center; justify-content: center;';
+
+                // 弹窗内容
+                modal.innerHTML = `
+        <div style="background: #1f1f1f; border-radius: 16px; width: 300px; padding: 24px; text-align: center;">
+            <h3 style="margin: 0 0 16px 0; color: white;">解锁第${episodeNum}集</h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="pay-vip-btn" style="background: #e63946; border: none; padding: 12px; border-radius: 30px; color: white; font-size: 16px; cursor: pointer;">VIP免费观看</button>
+                <button class="pay-points-btn" style="background: #333; border: none; padding: 12px; border-radius: 30px; color: white; font-size: 16px; cursor: pointer;">10积分观看</button>
+                <button class="pay-close-btn" style="background: none; border: none; padding: 8px; color: #888; cursor: pointer;">取消</button>
+            </div>
+        </div>
+    `;
+
+                document.body.appendChild(modal);
+
+                // 绑定事件
+                modal.querySelector('.pay-vip-btn').onclick = () => {
+                    alert('VIP免费观看（开发中）');
+                    modal.remove();
+                };
+                modal.querySelector('.pay-points-btn').onclick = () => {
+                    alert('积分观看（开发中）');
+                    modal.remove();
+                };
+                modal.querySelector('.pay-close-btn').onclick = () => {
+                    modal.remove();
+                };
+                // 点击遮罩关闭
+                modal.onclick = (e) => {
+                    if (e.target === modal) modal.remove();
+                };
+            }
             // 全屏功能
             const fullscreenBtn = document.querySelector('.fullscreen-btn');
             const playerLeftContainer = document.querySelector('.player-left');
@@ -1732,21 +1869,26 @@
             const playerControls = document.querySelector('.player-controls');
             if (playerLeftInner) {
                 playerLeftInner.addEventListener('click', (e) => {
+                    if (currentEpisode > freeUntilEpisode) {
+                        return;
+                    }
                     if (e.target.closest('.player-controls')) {
                         return;
                     }
 
                     if (video.paused) {
-                        video.play();
-                        const playPauseBtn = document.querySelector('.play-pause-btn');
-                        if (playPauseBtn) {
-                            playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                        if (currentEpisode <= freeUntilEpisode) {
+                            video.play();
+                            const playPauseBtn = document.querySelector('.play-pause-btn');
+                            if (playPauseBtn) {
+                                playPauseBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+                            }
                         }
                     } else {
                         video.pause();
                         const playPauseBtn = document.querySelector('.play-pause-btn');
                         if (playPauseBtn) {
-                            playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+                            playPauseBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
                         }
                     }
                 });
