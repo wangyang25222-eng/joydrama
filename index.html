@@ -1575,18 +1575,8 @@
                             if (ep <= freeUntilEpisode || isEpisodeUnlocked(ep)) {
                                 switchEpisode(ep);
                             } else {
-                                if (!canUnlockEpisode(ep)) {
-                                    alert('请先解锁前一集');
-                                    return;
-                                }
-                                if (getUserPoints() < 10) {
-                                    alert('播放积分不足，请获取积分');
-                                    return;
-                                }
-                                deductPoints(10);
-                                unlockEpisode(ep);
-                                renderEpisodeList();
                                 switchEpisode(ep);
+                                showPayModal(ep);
                             }
                         };
                     })(i);
