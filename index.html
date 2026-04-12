@@ -1036,7 +1036,9 @@
                     </div>
                     <div>
                         <div class="value" id="userPointsValue">100</div>
-                        <div class="label">播放积分</div>
+                        <div class="label"><span
+                                style="color: #f39c12; font-size: 18px; vertical-align: middle;">✦</span> <span
+                                style="vertical-align: middle;">播放积分</span></div>
                     </div>
                 </div>
                 <button class="login-btn" onclick="alert('登录/注册功能开发中')">登录 / 注册</button>
@@ -1311,7 +1313,7 @@
     <div class="player-lock-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 20;">
     <svg width="48" height="48" viewBox="0 0 24 24" fill="white"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
     <p style="color: white; margin: 16px 0; font-size: 16px;">这是付费剧集，请解锁后观看</p>
-    <button class="unlock-btn" style="background: #e63946; border: none; padding: 10px 30px; border-radius: 30px; color: white; font-size: 16px; cursor: pointer;">立即解锁</button>
+    <button class="unlock-btn" style="background: #e63946; border: none; padding: 10px 30px; border-radius: 30px; color: white; font-size: 16px; cursor: pointer; font-weight: bold;"><span style="color: #f39c12;">✦</span> 10 立即解锁</button>
 </div>
 <!-- 播放器控件 -->
 <div class="player-controls" style="position: absolute; bottom: 20px; left: 0; right: 0; background: rgba(0,0,0,0.6); padding: 8px 0 8px 0; display: flex; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.3s; z-index: 10;">
@@ -1682,6 +1684,26 @@
             // 初始化
             initUserData();
             updateProfileCounts()
+            function showToast(message, isError = true) {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                toast.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: ${isError ? 'rgba(0,0,0,0.8)' : 'rgba(46,204,113,0.9)'};
+        color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 14px;
+        z-index: 30000;
+        text-align: center;
+        white-space: nowrap;
+    `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+            }
             renderEpisodeList();
             const descText = document.querySelector('.desc-text');
             const moreBtn = document.querySelector('.desc-more');
@@ -1909,17 +1931,23 @@
                     modal.remove();
                 };
                 modal.querySelector('.pay-points-btn').onclick = () => {
-                    // 积分解锁逻辑
+                    // 顺序检查：如果不是第一集付费，检查前一集是否已解锁
+                    if (episodeNum > freeUntilEpisode + 1) {
+                        const prevEp = episodeNum - 1;
+                        if (!isEpisodeUnlocked(prevEp)) {
+                            showToast('请先解锁前一集');
+                            return;
+                        }
+                    }
+
                     if (getUserPoints() >= 10) {
                         deductPoints(10);
                         unlockEpisode(episodeNum);
-                        alert('解锁成功！');
                         modal.remove();
-                        // 刷新集数列表并播放
                         renderEpisodeList();
                         switchEpisode(episodeNum);
                     } else {
-                        alert('播放积分不足，请获取积分');
+                        showToast('积分不足');
                     }
                 };
                 modal.querySelector('.pay-close-btn').onclick = () => {
@@ -1930,29 +1958,19 @@
                 };
             }
 
-            // 顺序解锁检查函数
+            // 顺序解锁检查函数（备用，当前未使用）
             function checkAndUnlock(ep) {
-                // 检查是否满足顺序解锁
                 if (!canUnlockEpisode(ep)) {
-                    alert('请先解锁前一集');
+                    showToast('请先解锁前一集');
                     return false;
                 }
-
-                // 检查积分是否足够
-                const pointsNeeded = 10;
-                if (getUserPoints() < pointsNeeded) {
-                    alert('播放积分不足，请获取积分');
+                if (getUserPoints() < 10) {
+                    showToast('积分不足');
                     return false;
                 }
-
-                // 扣除积分，解锁集数
-                deductPoints(pointsNeeded);
+                deductPoints(10);
                 unlockEpisode(ep);
-
-                // 刷新集数列表（移除锁图标）
                 renderEpisodeList();
-
-                // 重新播放该集（隐藏锁定界面，正常播放）
                 switchEpisode(ep);
                 return true;
             }
