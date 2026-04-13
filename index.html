@@ -1578,7 +1578,6 @@
                                 switchEpisode(ep);
                             } else {
                                 switchEpisode(ep);
-                                showPayModal(ep);
                             }
                         };
                     })(i);
@@ -1621,7 +1620,32 @@
                 const unlockBtn = document.querySelector('.unlock-btn');
                 if (unlockBtn) {
                     unlockBtn.onclick = () => {
-                        showPayModal(currentEpisode);
+                        const currentEp = currentEpisode;
+
+                        // 检查是否是顺序的下一集（前一集已解锁或免费）
+                        const isNextEpisode = (currentEp <= freeUntilEpisode + 1) || isEpisodeUnlocked(currentEp - 1);
+
+                        if (isNextEpisode) {
+                            // 顺序下一集：直接解锁并播放
+                            if (getUserPoints() >= 10) {
+                                deductPoints(10);
+                                unlockEpisode(currentEp);
+                                renderEpisodeList();
+                                switchEpisode(currentEp);
+                                setTimeout(() => {
+                                    video.play().catch(e => console.log('自动播放失败:', e));
+                                    const playPauseBtn = document.querySelector('.play-pause-btn');
+                                    if (playPauseBtn) {
+                                        playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                                    }
+                                }, 100);
+                            } else {
+                                showPayModal(currentEp);
+                            }
+                        } else {
+                            // 跳过的集数：弹窗
+                            showPayModal(currentEp);
+                        }
                     };
                 }
                 const lockOverlay = document.querySelector('.player-lock-overlay');
@@ -1636,9 +1660,8 @@
                     }
                     const centerPlayBtn = document.querySelector('.center-play-btn');
                     if (centerPlayBtn) centerPlayBtn.style.display = 'none';
+                    video.skipCenterBtn = true;
                     video.pause();
-                    video.src = video.src;  // 强制重载当前视频
-                    video.load();
                     video.currentTime = 0;
                     // 更新面包屑和标题（但不播放）
                     const breadcrumb = document.querySelector('.breadcrumb');
@@ -1663,7 +1686,13 @@
                 renderEpisodeList();
                 // 重置视频进度并播放
                 video.currentTime = 0;
-                video.play();
+                setTimeout(() => {
+                    video.play().catch(e => console.log('自动播放失败:', e));
+                    const playPauseBtn = document.querySelector('.play-pause-btn');
+                    if (playPauseBtn) {
+                        playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                    }
+                }, 100);
                 // 更新播放按钮图标
                 playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
             }
@@ -1814,6 +1843,10 @@
                 });
 
                 video.addEventListener('pause', () => {
+                    if (video.skipCenterBtn) {
+                        video.skipCenterBtn = false;
+                        return;
+                    }
                     if (centerPlayBtn) centerPlayBtn.style.display = 'flex';
                 });
                 video.addEventListener('timeupdate', () => {
