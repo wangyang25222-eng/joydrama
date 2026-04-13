@@ -1313,7 +1313,7 @@
     </div>
 <div class="player-lock-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 20;">
     <svg width="48" height="48" viewBox="0 0 24 24" fill="white"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-    <div id="lockWarning" style="color: #e63946; font-size: 14px; margin-top: 10px; margin-bottom: 5px; display: none;">⚠️ 请先解锁前一集</div>
+    <div id="lockWarning" style="color: #e63946; font-size: 14px; margin-top: 10px; margin-bottom: 5px; display: none;">⚠️请先解锁前一集</div>
     <p style="color: white; margin: 16px 0; font-size: 16px;">这是付费剧集，请解锁后观看</p>
     <button class="unlock-btn" style="background: #e63946; border: none; padding: 10px 30px; border-radius: 30px; color: white; font-size: 16px; cursor: pointer; font-weight: bold;"><span style="color: #f39c12;">✦</span> 10 立即解锁</button>
 </div>
@@ -1624,28 +1624,28 @@
                     unlockBtn.onclick = () => {
                         const currentEp = currentEpisode;
 
-                        // 检查是否是顺序的下一集（前一集已解锁或免费）
-                        const isNextEpisode = (currentEp <= freeUntilEpisode + 1) || isEpisodeUnlocked(currentEp - 1);
-
-                        if (isNextEpisode) {
-                            // 顺序下一集：直接解锁并播放
-                            if (getUserPoints() >= 10) {
-                                deductPoints(10);
-                                unlockEpisode(currentEp);
-                                renderEpisodeList();
-                                switchEpisode(currentEp);
-                                setTimeout(() => {
-                                    video.play().catch(e => console.log('自动播放失败:', e));
-                                    const playPauseBtn = document.querySelector('.play-pause-btn');
-                                    if (playPauseBtn) {
-                                        playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
-                                    }
-                                }, 100);
-                            } else {
-                                showPayModal(currentEp);
+                        // 顺序检查：如果不是第一集付费，且前一集未解锁
+                        if (currentEp > freeUntilEpisode + 1) {
+                            const prevEp = currentEp - 1;
+                            if (!isEpisodeUnlocked(prevEp)) {
+                                return;
                             }
+                        }
+
+                        // 第一集付费或顺序正确
+                        if (getUserPoints() >= 10) {
+                            deductPoints(10);
+                            unlockEpisode(currentEp);
+                            renderEpisodeList();
+                            switchEpisode(currentEp);
+                            setTimeout(() => {
+                                video.play().catch(e => console.log('自动播放失败:', e));
+                                const playPauseBtn = document.querySelector('.play-pause-btn');
+                                if (playPauseBtn) {
+                                    playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                                }
+                            }, 100);
                         } else {
-                            // 跳过的集数：弹窗
                             showPayModal(currentEp);
                         }
                     };
@@ -1965,7 +1965,7 @@
                 modal.innerHTML = `
         <div style="background: #1a1a1a; border-radius: 20px; width: 90%; max-width: 600px; margin: 20px auto; padding: 20px; color: white;">
             <!-- 头部余额 -->
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #333;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 30px; padding-bottom: 15px; border-bottom: 1px solid #333;">
     <div style="font-size: 16px;">价格: <span style="color: #f39c12; vertical-align: middle;">✦</span> <span style="vertical-align: middle;">10</span></div>
     <div style="font-size: 16px;">余额: <span style="color: #f39c12; vertical-align: middle;">✦</span> <span id="modalPoints" style="vertical-align: middle;">${currentPoints}</span></div>
 </div>
@@ -1975,28 +1975,28 @@
                 <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">VIP 免费解锁所有剧集</div>
                 <div style="font-size: 12px; color: #888; margin-bottom: 15px;">自动续订。可随时取消。</div>
                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                    <div class="vip-plan" data-plan="weekly" data-price="19.99" style="flex: 1; min-width: 100px; background: #2a2a2a; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent;">
+                    <div class="vip-plan" data-plan="weekly" data-price="19.99" style="flex: 1; min-width: 100px; background: linear-gradient(135deg, #e8d5a3, #d4b87a); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent;">
                         <div style="font-size: 16px; font-weight: bold;">周VIP</div>
-                        <div style="font-size: 20px; color: #f39c12; margin: 8px 0;">¥19.99</div>
-                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #aaa;">
+                        <div style="font-size: 20px; color: #1a1a1a; margin: 8px 0;">¥19.99</div>
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #6a6a6a">
                             <span>🔓 无限观看</span>
-                            <span>🎬 1080p高画质</span>
+                            <span>🎬 超清画质</span>
                         </div>
                     </div>
-                    <div class="vip-plan" data-plan="monthly" data-price="69.99" style="flex: 1; min-width: 100px; background: #2a2a2a; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent;">
+                    <div class="vip-plan" data-plan="monthly" data-price="69.99" style="flex: 1; min-width: 100px; background: linear-gradient(135deg, #e8d5a3, #d4b87a); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent;">
                         <div style="font-size: 16px; font-weight: bold;">月VIP</div>
-                        <div style="font-size: 20px; color: #f39c12; margin: 8px 0;">¥69.99</div>
-                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #aaa;">
+                        <div style="font-size: 20px; color: #1a1a1a; margin: 8px 0;">¥69.99</div>
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #6a6a6a">
                             <span>🔓 无限观看</span>
-                            <span>🎬 1080p高画质</span>
+                            <span>🎬 超清画质</span>
                         </div>
                     </div>
-                    <div class="vip-plan" data-plan="yearly" data-price="599.99" style="flex: 1; min-width: 100px; background: #2a2a2a; border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent;">
+                    <div class="vip-plan" data-plan="yearly" data-price="599.99" style="flex: 1; min-width: 100px; background: linear-gradient(135deg, #e8d5a3, #d4b87a); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent;">
                         <div style="font-size: 16px; font-weight: bold;">年VIP</div>
-                        <div style="font-size: 20px; color: #f39c12; margin: 8px 0;">¥599.99</div>
-                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #aaa;">
+                        <div style="font-size: 20px; color: #1a1a1a; margin: 8px 0;">¥599.99</div>
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; color: #6a6a6a">
                             <span>🔓 无限观看</span>
-                            <span>🎬 1080p高画质</span>
+                            <span>🎬 超清画质</span>
                         </div>
                     </div>
                 </div>
@@ -2007,35 +2007,35 @@
     <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">购买积分</div>
     <div style="font-size: 12px; color: #888; margin-bottom: 15px;">随时可用，永不过期。</div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-        <div class="points-plan" data-points="200" data-price="1.99" data-bonus="0" style="flex: 1; min-width: 70px; background: #2a2a2a; border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent;">
+        <div class="points-plan" data-points="200" data-price="1.99" data-bonus="0" style="flex: 1; min-width: 70px; background: linear-gradient(135deg, #6b21a5, #4a0e4e); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent;">
             <div style="font-size: 14px; font-weight: bold;"><span style="color: #f39c12;">✦</span>200</div>
             <div style="font-size: 12px; color: #f39c12;">¥1.99</div>
         </div>
-        <div class="points-plan" data-points="500" data-price="4.99" data-bonus="50" style="flex: 1; min-width: 70px; background: #2a2a2a; border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
+        <div class="points-plan" data-points="500" data-price="4.99" data-bonus="50" style="flex: 1; min-width: 70px; background: linear-gradient(135deg, #6b21a5, #4a0e4e); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
             <div style="position: absolute; top: -8px; right: -5px; background: #e63946; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px;">+10%</div>
             <div style="font-size: 14px; font-weight: bold;"><span style="color: #f39c12;">✦</span>500</div>
             <div style="font-size: 12px; color: #f39c12;">¥4.99</div>
             <div style="font-size: 10px; color: #aaa;">+50</div>
         </div>
-        <div class="points-plan" data-points="1000" data-price="9.99" data-bonus="300" style="flex: 1; min-width: 70px; background: #2a2a2a; border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
+        <div class="points-plan" data-points="1000" data-price="9.99" data-bonus="300" style="flex: 1; min-width: 70px; background: linear-gradient(135deg, #6b21a5, #4a0e4e); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
             <div style="position: absolute; top: -8px; right: -5px; background: #e63946; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px;">+30%</div>
             <div style="font-size: 14px; font-weight: bold;"><span style="color: #f39c12;">✦</span>1000</div>
             <div style="font-size: 12px; color: #f39c12;">¥9.99</div>
             <div style="font-size: 10px; color: #aaa;">+300</div>
         </div>
-        <div class="points-plan" data-points="2000" data-price="18.99" data-bonus="1000" style="flex: 1; min-width: 70px; background: #2a2a2a; border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
+        <div class="points-plan" data-points="2000" data-price="18.99" data-bonus="1000" style="flex: 1; min-width: 70px; background: linear-gradient(135deg, #6b21a5, #4a0e4e); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
             <div style="position: absolute; top: -8px; right: -5px; background: #e63946; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px;">+50%</div>
             <div style="font-size: 14px; font-weight: bold;"><span style="color: #f39c12;">✦</span>2000</div>
             <div style="font-size: 12px; color: #f39c12;">¥18.99</div>
             <div style="font-size: 10px; color: #aaa;">+1000</div>
         </div>
-        <div class="points-plan" data-points="5000" data-price="45.99" data-bonus="3500" style="flex: 1; min-width: 70px; background: #2a2a2a; border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
+        <div class="points-plan" data-points="5000" data-price="45.99" data-bonus="3500" style="flex: 1; min-width: 70px; background: linear-gradient(135deg, #6b21a5, #4a0e4e); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
             <div style="position: absolute; top: -8px; right: -5px; background: #e63946; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px;">+70%</div>
             <div style="font-size: 14px; font-weight: bold;"><span style="color: #f39c12;">✦</span>5000</div>
             <div style="font-size: 12px; color: #f39c12;">¥45.99</div>
             <div style="font-size: 10px; color: #aaa;">+3500</div>
         </div>
-        <div class="points-plan" data-points="10000" data-price="89.99" data-bonus="10000" style="flex: 1; min-width: 70px; background: #2a2a2a; border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
+        <div class="points-plan" data-points="10000" data-price="89.99" data-bonus="10000" style="flex: 1; min-width: 70px; background: linear-gradient(135deg, #6b21a5, #4a0e4e); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; position: relative;">
             <div style="position: absolute; top: -8px; right: -5px; background: #e63946; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px;">+100%</div>
             <div style="font-size: 14px; font-weight: bold;"><span style="color: #f39c12;">✦</span>10000</div>
             <div style="font-size: 12px; color: #f39c12;">¥89.99</div>
@@ -2099,8 +2099,7 @@
                         modal.remove();
                     } else if (selectedPointsPlan) {
                         const totalPoints = selectedPointsPlan.points + (selectedPointsPlan.bonus || 0);
-                        addPoints(totalPoints);
-                        alert(`购买成功！获得 ${totalPoints} 积分`);
+                        alert(`支付功能开发中，应获得 ${selectedPointsPlan.points + (selectedPointsPlan.bonus || 0)} 积分`);
                         modal.remove();
                         // 刷新弹窗中的余额显示
                         const modalPointsSpan = document.getElementById('modalPoints');
