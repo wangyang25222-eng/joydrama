@@ -911,6 +911,14 @@
         .card .delete-icon:hover {
             color: #e67e22;
         }
+
+        .payment-option {
+            transition: all 0.2s ease;
+        }
+
+        .payment-option:hover {
+            background: #2a2a2a;
+        }
     </style>
 </head>
 
@@ -1959,13 +1967,13 @@
 
                 // 创建遮罩层
                 const modal = document.createElement('div');
-                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 20000; display: flex; align-items: center; justify-content: center; overflow-y: auto;';
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 20000; display: flex; align-items: flex-start; justify-content: center; overflow-y: auto;';
 
                 // 弹窗内容
                 modal.innerHTML = `
-        <div style="background: #1a1a1a; border-radius: 20px; width: 90%; max-width: 600px; margin: 20px auto; padding: 20px; color: white;">
+        <div style="background: #1a1a1a; border-radius: 20px; width: 90%; max-width: 600px; margin: 0 auto; padding: 20px; color: white;">
             <!-- 头部余额 -->
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; margin-top: 30px; padding-bottom: 15px; border-bottom: 1px solid #333;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #333;">
     <div style="font-size: 16px;">价格: <span style="color: #f39c12; vertical-align: middle;">✦</span> <span style="vertical-align: middle;">10</span></div>
     <div style="font-size: 16px;">余额: <span style="color: #f39c12; vertical-align: middle;">✦</span> <span id="modalPoints" style="vertical-align: middle;">${currentPoints}</span></div>
 </div>
@@ -1973,7 +1981,7 @@
             <!-- VIP会员区 -->
             <div style="margin-bottom: 30px;">
                 <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">VIP 免费解锁所有剧集</div>
-                <div style="font-size: 12px; color: #888; margin-bottom: 15px;">自动续订。可随时取消。</div>
+                <div style="font-size: 12px; color: #888; margin-bottom: 15px;">「立即生效，按需续费」</div>
                 <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                     <div class="vip-plan" data-plan="weekly" data-price="19.99" style="flex: 1; min-width: 100px; background: linear-gradient(135deg, #e8d5a3, #d4b87a); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; border: 2px solid transparent;">
                         <div style="font-size: 16px; font-weight: bold;">周VIP</div>
@@ -2005,7 +2013,7 @@
 <!-- 积分购买区 -->
 <div style="margin-bottom: 30px;">
     <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">购买积分</div>
-    <div style="font-size: 12px; color: #888; margin-bottom: 15px;">随时可用，永不过期。</div>
+    <div style="font-size: 12px; color: #888; margin-bottom: 15px;">「随时可用，永不过期」</div>
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
         <div class="points-plan" data-points="200" data-price="1.99" data-bonus="0" style="flex: 1; min-width: 70px; background: linear-gradient(135deg, #6b21a5, #4a0e4e); border-radius: 10px; padding: 10px; text-align: center; cursor: pointer; border: 2px solid transparent;">
             <div style="font-size: 14px; font-weight: bold;"><span style="color: #f39c12;">✦</span>200</div>
@@ -2044,15 +2052,28 @@
     </div>
 </div>
             
-            <!-- 支付方式 -->
-            <div style="margin-bottom: 20px;">
-                <div style="font-size: 14px; color: #aaa; margin-bottom: 10px;">支付方式</div>
-                <div style="display: flex; gap: 15px;">
-                    <span style="background: #2a2a2a; padding: 8px 16px; border-radius: 20px; font-size: 14px;">微信支付</span>
-                    <span style="background: #2a2a2a; padding: 8px 16px; border-radius: 20px; font-size: 14px;">支付宝</span>
-                    <span style="background: #2a2a2a; padding: 8px 16px; border-radius: 20px; font-size: 14px;">PayPal</span>
-                </div>
-            </div>
+<!-- 支付方式 -->
+<div style="margin-bottom: 20px;">
+    <div style="font-size: 14px; color: #aaa; margin-bottom: 10px;">支付方式</div>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <div class="payment-option selected" data-payment="wechat" style="flex: 1; min-width: 70px; background: #2a2a2a; border: 2px solid #e63946; border-radius: 10px; padding: 8px; text-align: center; cursor: pointer;">
+            <div style="font-size: 20px;">💬</div>
+            <div style="font-size: 11px;">微信支付</div>
+        </div>
+        <div class="payment-option" data-payment="alipay" style="flex: 1; min-width: 70px; background: #1f1f1f; border: 2px solid #3a3a3a; border-radius: 10px; padding: 8px; text-align: center; cursor: pointer;">
+            <div style="font-size: 20px;">💰</div>
+            <div style="font-size: 11px;">支付宝</div>
+        </div>
+        <div class="payment-option" data-payment="paypal" style="flex: 1; min-width: 70px; background: #1f1f1f; border: 2px solid #3a3a3a; border-radius: 10px; padding: 8px; text-align: center; cursor: pointer;">
+            <div style="font-size: 20px;">🅿️</div>
+            <div style="font-size: 11px;">PayPal</div>
+        </div>
+        <div class="payment-option" data-payment="quick" style="flex: 1; min-width: 70px; background: #1f1f1f; border: 2px solid #3a3a3a; border-radius: 10px; padding: 8px; text-align: center; cursor: pointer;">
+            <div style="font-size: 20px;">💳</div>
+            <div style="font-size: 11px;">快捷支付</div>
+        </div>
+    </div>
+</div>
             
             <!-- 底部按钮 -->
             <button class="pay-submit-btn" style="width: 80%; display: block; margin: 10px auto 0; background: linear-gradient(135deg, #f39c12, #e67e22); border: none; padding: 12px; border-radius: 40px; color: white; font-size: 16px; font-weight: bold; cursor: pointer;">立即支付</button>
@@ -2091,23 +2112,31 @@
                     });
                 });
 
-                // 立即支付
+                // 获取选中的支付方式
+                let selectedPayment = 'wechat'; // 默认微信
+                document.querySelectorAll('.payment-option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        document.querySelectorAll('.payment-option').forEach(opt => {
+                            opt.style.borderColor = '#3a3a3a';
+                            opt.style.background = '#1f1f1f';
+                            opt.querySelector('.check-mark').style.opacity = '0';
+                        });
+                        option.style.borderColor = '#e63946';
+                        option.style.background = '#2a2a2a';
+                        option.querySelector('.check-mark').style.opacity = '1';
+                        selectedPayment = option.dataset.payment;
+                    });
+                });
+
+                // 立即支付按钮
                 modal.querySelector('.pay-submit-btn').onclick = () => {
                     if (selectedVipPlan) {
-                        alert(`VIP ${selectedVipPlan} 支付功能开发中，金额: ¥${selectedVipPlan === 'weekly' ? '19.99' : selectedVipPlan === 'monthly' ? '69.99' : '599.99'}`);
-                        // 这里后续对接支付，成功后设置VIP状态
+                        alert(`VIP ${selectedVipPlan} 支付功能开发中，金额: ¥${selectedVipPlan === 'weekly' ? '19.99' : selectedVipPlan === 'monthly' ? '69.99' : '599.99'}\n支付方式: ${selectedPayment}\n后续将跳转到支付页面`);
                         modal.remove();
                     } else if (selectedPointsPlan) {
                         const totalPoints = selectedPointsPlan.points + (selectedPointsPlan.bonus || 0);
-                        alert(`支付功能开发中，应获得 ${selectedPointsPlan.points + (selectedPointsPlan.bonus || 0)} 积分`);
+                        alert(`购买 ${totalPoints} 积分，金额: ¥${selectedPointsPlan.price}\n支付方式: ${selectedPayment}\n后续将跳转到支付页面`);
                         modal.remove();
-                        // 刷新弹窗中的余额显示
-                        const modalPointsSpan = document.getElementById('modalPoints');
-                        if (modalPointsSpan) {
-                            modalPointsSpan.innerText = getUserPoints();
-                        }
-                        // 刷新我的页面积分
-                        updateProfileCounts();
                     } else {
                         alert('请先选择一个套餐');
                     }
