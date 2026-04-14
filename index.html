@@ -2035,10 +2035,10 @@
         </div>
     </div>
     
-<!-- 支付方式 -->
-<div style="margin-bottom: 20px;">
-    <div style="font-size: 14px; color: #aaa; margin-bottom: 10px;">支付方式</div>
-    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <!-- 支付方式 -->
+        <div style="margin-bottom: 20px;">
+        <div style="font-size: 14px; color: #aaa; margin-bottom: 10px;">支付方式</div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
         
         <!-- 微信支付 -->
         <div class="payment-option" data-payment="wechat" style="flex: 1; min-width: 70px; height: 50px; background: #1f1f1f; border: 2px solid #3a3a3a; border-radius: 10px; padding: 0; cursor: pointer; overflow: hidden;">
@@ -2055,18 +2055,18 @@
             <img src="https://newsroom.china.paypal-corp.com/image/pp_h_rgb_logo_tn.jpg" alt="PayPal" style="width: 100%; height: 100%; object-fit: cover; display: block;">
         </div>
 
-        <!-- 快捷支付（信用卡） -->
+        <!-- Stripe 支付（快捷支付） -->
         <div class="payment-option" data-payment="quick" style="flex: 1; min-width: 70px; height: 50px; background: #1f1f1f; border: 2px solid #3a3a3a; border-radius: 10px; padding: 0; cursor: pointer; overflow: hidden;">
-            <img src="https://www.gompay.jp/user/pages/statics/images/common/logo-payment-methods/creditcard.png" alt="快捷支付" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        <img src="https://picx.zhimg.com/v2-15de56efa7c126396bd0b83a807b0dc4_720w.jpg?source=172ae18b" alt="Stripe" style="width: 100%; height: 100%; object-fit: cover; object-position: center center; display: block;">
         </div>
 
-    </div>
-</div>
+        </div>
+        </div>
     
-    <button class="pay-submit-btn" style="width: 80%; display: block; margin: 10px auto 0; background: linear-gradient(135deg, #f39c12, #e67e22); border: none; padding: 12px; border-radius: 40px; color: white; font-size: 16px; font-weight: bold; cursor: pointer;">立即支付</button>
-    <button class="pay-close-btn" style="width: 100%; background: none; border: none; padding: 12px; color: #888; cursor: pointer; margin-top: 10px;">关闭</button>
-</div>
-`;
+        <button class="pay-submit-btn" style="width: 80%; display: block; margin: 10px auto 0; background: linear-gradient(135deg, #f39c12, #e67e22); border: none; padding: 12px; border-radius: 40px; color: white; font-size: 16px; font-weight: bold; cursor: pointer;">立即支付</button>
+        <button class="pay-close-btn" style="width: 100%; background: none; border: none; padding: 12px; color: #888; cursor: pointer; margin-top: 10px;">关闭</button>
+        </div>
+        `;
 
                 document.body.appendChild(modal);
 
@@ -2121,6 +2121,11 @@
 
                 // 立即支付按钮
                 modal.querySelector('.pay-submit-btn').onclick = () => {
+                    if (selectedPayment === 'wechat' || selectedPayment === 'alipay') {
+                        showUpgradeTip(selectedPayment === 'wechat' ? '微信支付' : '支付宝');
+                        return;
+                    }
+
                     if (selectedVipPlan) {
                         alert(`VIP ${selectedVipPlan} 支付功能开发中，金额: ¥${selectedVipPlan === 'weekly' ? '19.99' : selectedVipPlan === 'monthly' ? '69.99' : '599.99'}\n支付方式: ${selectedPayment}\n后续将跳转到支付页面`);
                         modal.remove();
@@ -2139,6 +2144,25 @@
                 modal.onclick = (e) => {
                     if (e.target === modal) modal.remove();
                 };
+            }
+            // 支付方式升级提示
+            function showUpgradeTip(paymentName) {
+                const modal = document.createElement('div');
+                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 20001; display: flex; align-items: center; justify-content: center;';
+
+                modal.innerHTML = `
+        <div style="background: #1a1a1a; border-radius: 20px; width: 280px; padding: 24px; text-align: center; color: white;">
+            <div style="font-size: 48px; margin-bottom: 12px;">⏳</div>
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">功能升级中</div>
+            <div style="font-size: 14px; color: #aaa; margin-bottom: 24px;">${paymentName}正在升级，请先选择其他方式进行购买。</div>
+            <button class="upgrade-close-btn" style="background: linear-gradient(135deg, #f39c12, #e67e22); border: none; padding: 10px 30px; border-radius: 30px; color: white; font-size: 14px; cursor: pointer;">我知道了</button>
+        </div>
+    `;
+
+                document.body.appendChild(modal);
+
+                modal.querySelector('.upgrade-close-btn').onclick = () => modal.remove();
+                modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
             }
 
             // 全屏功能
