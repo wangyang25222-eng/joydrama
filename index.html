@@ -1035,6 +1035,7 @@
         </div>
     </div>
     <div id="categoryPage" class="page"></div>
+    <div id="searchPage" class="page"></div>
     <div id="profile" class="page">
         <div style="padding: 16px;">
             <div class="profile-header">
@@ -1651,13 +1652,11 @@
                             unlockEpisode(currentEp);
                             renderEpisodeList();
                             switchEpisode(currentEp);
-                            setTimeout(() => {
-                                video.play().catch(e => console.log('自动播放失败:', e));
-                                const playPauseBtn = document.querySelector('.play-pause-btn');
-                                if (playPauseBtn) {
-                                    playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
-                                }
-                            }, 100);
+                            video.play().catch(e => console.log('自动播放失败:', e));
+                            const playPauseBtn = document.querySelector('.play-pause-btn');
+                            if (playPauseBtn) {
+                                playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                            }
                         } else {
                             showPayModal(currentEp);
                         }
@@ -1857,9 +1856,6 @@
                     const minutes = Math.floor(video.duration / 60);
                     const seconds = Math.floor(video.duration % 60);
                     timeDisplay.innerHTML = `00:00 <span style="color: #888;">/ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</span>`;
-                    if (currentEpisode <= freeUntilEpisode) {
-                        video.play();
-                    }
                     const playPauseBtn = document.querySelector('.play-pause-btn');
                     if (playPauseBtn) {
                         playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
@@ -1908,7 +1904,6 @@
                 } else if (currentEpisode < totalEpisodes) {
                     if (currentEpisode + 1 <= freeUntilEpisode) {
                         switchEpisode(currentEpisode + 1);
-                        setTimeout(() => video.play(), 100);
                     } else {
                         const nextEp = currentEpisode + 1;
                         switchEpisode(nextEp);
@@ -2343,6 +2338,7 @@
                     left.style.paddingTop = '0';
                 }
             }
+            video.play();
         }
 
         function addToHistory(item) {
@@ -2950,6 +2946,126 @@
 
             render();
         }
+        // 搜索影片
+        function searchVideos(keyword) {
+            if (!keyword.trim()) {
+                showToast('请输入搜索关键词');
+                return;
+            }
+
+            const results = [];
+
+            // 从首页分类中搜索
+            homeCategories.forEach(cat => {
+                cat.items.forEach(item => {
+                    if (item.name.includes(keyword)) {
+                        results.push(item);
+                    }
+                });
+            });
+
+            // 从免费页分类中搜索
+            if (subCategories.free) {
+                subCategories.free.forEach(cat => {
+                    cat.items.forEach(item => {
+                        if (item.name.includes(keyword)) {
+                            results.push(item);
+                        }
+                    });
+                });
+            }
+
+            // 去重（根据 id）
+            const uniqueResults = [];
+            const ids = new Set();
+            for (const item of results) {
+                if (!ids.has(item.id)) {
+                    ids.add(item.id);
+                    uniqueResults.push(item);
+                }
+            }
+
+            // 渲染搜索结果页面
+            renderSearchResults(uniqueResults, keyword);
+        }
+
+        // 渲染搜索结果页面
+        function renderSearchResults(results, keyword) {
+            const container = document.getElementById('searchPage');
+            const pageSize = 18;
+            let currentPage = 1;
+            const totalItems = results.length;
+            const totalPages = Math.ceil(totalItems / pageSize);
+
+            function render() {
+                const start = (currentPage - 1) * pageSize;
+                const pageItems = results.slice(start, start + pageSize);
+
+                const gridHtml = pageItems.map(item => `
+            <div class="card-wrapper">
+                <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}" data-category="${item.category}">
+                    <img src="${item.img}">
+                    <div class="card-hover-icons">
+                        <div class="play-icon">
+                            <svg viewBox="0 0 24 24" fill="white" width="20" height="20">
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-title">${item.name}</div>
+            </div>
+        `).join('');
+
+                let paginationHtml = `<div style="display: flex; justify-content: center; gap: 8px; margin-top: 30px; flex-wrap: wrap; align-items: center;">`;
+                if (currentPage > 1) {
+                    paginationHtml += `<button onclick="changeSearchPage(${currentPage - 1})" style="background: #e63946; border: none; padding: 6px 12px; border-radius: 6px; color: white; cursor: pointer;">上一页</button>`;
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                    if (i === currentPage) {
+                        paginationHtml += `<button style="background: #e63946; border: none; padding: 6px 12px; border-radius: 6px; color: white; font-weight: bold;">${i}</button>`;
+                    } else {
+                        paginationHtml += `<button onclick="changeSearchPage(${i})" style="background: #333; border: none; padding: 6px 12px; border-radius: 6px; color: white; cursor: pointer;">${i}</button>`;
+                    }
+                }
+                if (currentPage < totalPages) {
+                    paginationHtml += `<button onclick="changeSearchPage(${currentPage + 1})" style="background: #e63946; border: none; padding: 6px 12px; border-radius: 6px; color: white; cursor: pointer;">下一页</button>`;
+                }
+                paginationHtml += `<span style="margin-left: 16px; color: #aaa; display: inline-flex; align-items: center;">第 ${currentPage} / ${totalPages} 页，共 ${totalItems} 部</span>`;
+                paginationHtml += `</div>`;
+
+                container.innerHTML = `
+            <div style="padding: 100px 20px 40px 20px;">
+                <h2 style="margin: 0 0 10px 0;">搜索结果: "${keyword}"</h2>
+                <p style="color: #aaa; margin-bottom: 24px;">共找到 ${totalItems} 部影片</p>
+                <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;">${gridHtml}</div>
+                ${paginationHtml}
+            </div>
+        `;
+
+                // 绑定卡片点击事件
+                container.querySelectorAll('.card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('.play-icon')) return;
+                        addToHistory({
+                            id: card.dataset.id,
+                            name: card.dataset.name,
+                            img: card.dataset.img,
+                            category: card.dataset.category
+                        });
+                    });
+                });
+            }
+
+            window.changeSearchPage = function (page) {
+                currentPage = page;
+                render();
+            };
+
+            // 切换到搜索页面
+            switchTo('searchPage');
+            render();
+        }
 
         function renderHome() {
             // 轮播图配置：指定要显示哪个分类的哪部影片
@@ -3039,10 +3155,10 @@
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const keyword = searchInput.value;
-                console.log('搜索关键词：', keyword);
                 searchInput.style.display = 'none';
                 searchBtn.style.display = 'inline-flex';
                 searchInput.value = '';
+                searchVideos(keyword);
             }
         });
 
