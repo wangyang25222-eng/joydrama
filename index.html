@@ -105,6 +105,11 @@
             z-index: 100;
         }
 
+        .back-btn {
+            transition: opacity 0.3s ease;
+            opacity: 1;
+        }
+
         /* 集数锁图标样式 */
         .episode-btn {
             position: relative;
@@ -1822,9 +1827,11 @@
                     controls.style.opacity = '1';
                     clearTimeout(hideTimer);
                     hideTimer = setTimeout(() => {
-                        controls.style.opacity = '0';
+                        hideControls();
                     }, 3000);
                 }
+                const backBtn = document.querySelector('.back-btn');
+                if (backBtn) backBtn.style.opacity = '1';
             }
 
             function hideControls() {
@@ -1833,6 +1840,8 @@
                     controls.style.opacity = '0';
                     clearTimeout(hideTimer);
                 }
+                const backBtn = document.querySelector('.back-btn');
+                if (backBtn) backBtn.style.opacity = '0';
             }
 
             if (playerInner && controls) {
