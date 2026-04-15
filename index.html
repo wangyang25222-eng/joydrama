@@ -1993,6 +1993,7 @@
             </div>
         </div>
     </div>
+    <div id="payHint" style="color: #e63946; font-size: 13px; text-align: center; margin: 10px 0; display: none;">请先选择一个套餐</div>
     
     <div style="margin-bottom: 30px;">
         <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">购买积分</div>
@@ -2121,8 +2122,19 @@
 
                 // 立即支付按钮
                 modal.querySelector('.pay-submit-btn').onclick = () => {
-                    if (selectedPayment === 'wechat' || selectedPayment === 'alipay') {
-                        showUpgradeTip(selectedPayment === 'wechat' ? '微信支付' : '支付宝');
+                    if (selectedPayment === 'wechat' || selectedPayment === 'alipay' || selectedPayment === 'paypal') {
+                        if (!selectedVipPlan && !selectedPointsPlan) {
+                            const hint = document.getElementById('payHint');
+                            if (hint) {
+                                hint.style.display = 'block';
+                                setTimeout(() => hint.style.display = 'none', 2000);
+                            }
+                            return;
+                        }
+                        let name = '微信支付';
+                        if (selectedPayment === 'alipay') name = '支付宝';
+                        if (selectedPayment === 'paypal') name = 'PayPal';
+                        showUpgradeTip(name);
                         return;
                     }
 
@@ -2134,7 +2146,14 @@
                         alert(`购买 ${totalPoints} 积分，金额: ¥${selectedPointsPlan.price}\n支付方式: ${selectedPayment}\n后续将跳转到支付页面`);
                         modal.remove();
                     } else {
-                        alert('请先选择一个套餐');
+                        const hint = document.getElementById('payHint');
+                        if (hint) {
+                            hint.style.display = 'block';
+                            setTimeout(() => {
+                                hint.style.display = 'none';
+                            }, 2000);
+                        }
+                        return;
                     }
                 };
 
