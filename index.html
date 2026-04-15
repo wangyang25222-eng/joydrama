@@ -1737,21 +1737,21 @@
                 const toast = document.createElement('div');
                 toast.textContent = message;
                 toast.style.cssText = `
-        position: fixed;
-        bottom: 100px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: ${isError ? 'rgba(0,0,0,0.8)' : 'rgba(46,204,113,0.9)'};
-        color: white;
-        padding: 10px 20px;
-        border-radius: 30px;
-        font-size: 14px;
-        z-index: 30000;
-        text-align: center;
-        white-space: nowrap;
-    `;
+    position: fixed;
+    bottom: 300px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: ${isError ? 'rgba(230, 57, 70, 0.95)' : 'rgba(46,204,113,0.9)'};
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    z-index: 30000;
+    text-align: center;
+    white-space: nowrap;
+`;
                 document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 2000);
+                setTimeout(() => toast.remove(), 1000);
             }
             renderEpisodeList();
             const descText = document.querySelector('.desc-text');
@@ -1993,7 +1993,6 @@
             </div>
         </div>
     </div>
-    <div id="payHint" style="color: #e63946; font-size: 13px; text-align: center; margin: 10px 0; display: none;">请先选择一个套餐</div>
     
     <div style="margin-bottom: 30px;">
         <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">购买积分</div>
@@ -2053,7 +2052,7 @@
 
         <!-- PayPal -->
         <div class="payment-option" data-payment="paypal" style="flex: 1; min-width: 70px; height: 50px; background: #1f1f1f; border: 2px solid #3a3a3a; border-radius: 10px; padding: 0; cursor: pointer; overflow: hidden;">
-            <img src="https://newsroom.china.paypal-corp.com/image/pp_h_rgb_logo_tn.jpg" alt="PayPal" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            <img src="https://n.sinaimg.cn/finance/transform/20160719/2XKk-fxuapvx8989044.png" alt="PayPal" style="width: 100%; height: 100%; object-fit: cover; display: block;">
         </div>
 
         <!-- Stripe 支付（快捷支付） -->
@@ -2122,38 +2121,19 @@
 
                 // 立即支付按钮
                 modal.querySelector('.pay-submit-btn').onclick = () => {
-                    if (selectedPayment === 'wechat' || selectedPayment === 'alipay' || selectedPayment === 'paypal') {
+                    if (selectedPayment === 'wechat' || selectedPayment === 'alipay' || selectedPayment === 'paypal' || selectedPayment === 'quick') {
                         if (!selectedVipPlan && !selectedPointsPlan) {
-                            const hint = document.getElementById('payHint');
-                            if (hint) {
-                                hint.style.display = 'block';
-                                setTimeout(() => hint.style.display = 'none', 2000);
-                            }
+                            showToast('请先选择一个套餐');
                             return;
                         }
-                        let name = '微信支付';
-                        if (selectedPayment === 'alipay') name = '支付宝';
-                        if (selectedPayment === 'paypal') name = 'PayPal';
-                        showUpgradeTip(name);
-                        return;
-                    }
+                        let url = 'https://www.paypal.com';
+                        if (selectedPayment === 'wechat') url = 'https://pay.weixin.qq.com';
+                        else if (selectedPayment === 'alipay') url = 'https://www.alipay.com';
+                        else if (selectedPayment === 'paypal') url = 'https://www.paypal.com';
+                        else if (selectedPayment === 'quick') url = 'https://stripe.com';
 
-                    if (selectedVipPlan) {
-                        alert(`VIP ${selectedVipPlan} 支付功能开发中，金额: ¥${selectedVipPlan === 'weekly' ? '19.99' : selectedVipPlan === 'monthly' ? '69.99' : '599.99'}\n支付方式: ${selectedPayment}\n后续将跳转到支付页面`);
+                        window.open(url, '_blank');
                         modal.remove();
-                    } else if (selectedPointsPlan) {
-                        const totalPoints = selectedPointsPlan.points + (selectedPointsPlan.bonus || 0);
-                        alert(`购买 ${totalPoints} 积分，金额: ¥${selectedPointsPlan.price}\n支付方式: ${selectedPayment}\n后续将跳转到支付页面`);
-                        modal.remove();
-                    } else {
-                        const hint = document.getElementById('payHint');
-                        if (hint) {
-                            hint.style.display = 'block';
-                            setTimeout(() => {
-                                hint.style.display = 'none';
-                            }, 2000);
-                        }
-                        return;
                     }
                 };
 
@@ -2163,27 +2143,9 @@
                 modal.onclick = (e) => {
                     if (e.target === modal) modal.remove();
                 };
-            }
-            // 支付方式升级提示
-            function showUpgradeTip(paymentName) {
-                const modal = document.createElement('div');
-                modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 20001; display: flex; align-items: center; justify-content: center;';
-
-                modal.innerHTML = `
-        <div style="background: #1a1a1a; border-radius: 20px; width: 280px; padding: 24px; text-align: center; color: white;">
-            <div style="font-size: 48px; margin-bottom: 12px;">⏳</div>
-            <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;">功能升级中</div>
-            <div style="font-size: 14px; color: #aaa; margin-bottom: 24px;">${paymentName}正在升级，请先选择其他方式进行购买。</div>
-            <button class="upgrade-close-btn" style="background: linear-gradient(135deg, #f39c12, #e67e22); border: none; padding: 10px 30px; border-radius: 30px; color: white; font-size: 14px; cursor: pointer;">我知道了</button>
-        </div>
-    `;
 
                 document.body.appendChild(modal);
-
-                modal.querySelector('.upgrade-close-btn').onclick = () => modal.remove();
-                modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
             }
-
             // 全屏功能
             const fullscreenBtn = document.querySelector('.fullscreen-btn');
             const playerLeftContainer = document.querySelector('.player-left');
