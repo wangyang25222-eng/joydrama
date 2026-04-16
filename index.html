@@ -1773,16 +1773,32 @@
             const likeCount = document.querySelector('.like-count');
             let liked = false;
             if (likeBtn && likeIcon && likeCount) {
+                // 初始化点赞状态（需要新建一个存储结构）
+                // 暂时先用 localStorage 存储每个影片的点赞状态
+                const likedMovies = JSON.parse(localStorage.getItem('likedMovies') || '{}');
+                const isLiked = likedMovies[movieId] === true;
+                if (isLiked) {
+                    liked = true;
+                    likeIcon.style.color = '#e63946';
+                    likeCount.textContent = '1';
+                } else {
+                    liked = false;
+                    likeIcon.style.color = '#ccc';
+                    likeCount.textContent = '0';
+                }
                 likeBtn.onclick = () => {
                     if (!liked) {
                         liked = true;
                         likeIcon.style.color = '#e63946';
                         likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                        likedMovies[movieId] = true;
                     } else {
                         liked = false;
                         likeIcon.style.color = '#ccc';
                         likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                        delete likedMovies[movieId];
                     }
+                    localStorage.setItem('likedMovies', JSON.stringify(likedMovies));
                 };
             }
 
@@ -1792,15 +1808,28 @@
             const favCount = document.querySelector('.fav-count');
             let favorited = false;
             if (favBtn && favIcon && favCount) {
+                // 初始化收藏状态
+                const isFavorited = favorites.some(f => f.id === movieId);
+                if (isFavorited) {
+                    favorited = true;
+                    favIcon.style.color = '#e63946';
+                    favCount.textContent = '1';
+                } else {
+                    favorited = false;
+                    favIcon.style.color = '#ccc';
+                    favCount.textContent = '0';
+                }
                 favBtn.onclick = () => {
                     if (!favorited) {
                         favorited = true;
                         favIcon.style.color = '#e63946';
                         favCount.textContent = parseInt(favCount.textContent) + 1;
+                        addToFavorite({ id: movieId, name: movieName, img: movieImg, category: categoryName });
                     } else {
                         favorited = false;
                         favIcon.style.color = '#ccc';
                         favCount.textContent = parseInt(favCount.textContent) - 1;
+                        removeFromFavorite(movieId);
                     }
                 };
             }
@@ -1853,7 +1882,7 @@
                     if (playPauseBtn) {
                         playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
                     }
-                    
+
                 });
                 const centerPlayBtn = document.querySelector('.center-play-btn');
 
@@ -2355,6 +2384,7 @@
             if (!favorites.find(f => f.id === item.id)) {
                 favorites.unshift(item);
                 saveFavorites();
+                renderFavoritesGrid();
             }
         }
 
