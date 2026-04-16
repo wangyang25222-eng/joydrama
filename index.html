@@ -1247,12 +1247,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    height: 100%;
 }
 .player-left-inner {
     background: #000;
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
+    flex: 1;
 }
     .player-left-inner video {
     width: 100%;
@@ -1332,14 +1334,14 @@
     <button class="unlock-btn" style="background: #e63946; border: none; padding: 10px 30px; border-radius: 30px; color: white; font-size: 16px; cursor: pointer; font-weight: bold;"><span style="color: #f39c12;">✦</span> 10 立即解锁</button>
 </div>
 <!-- 播放器控件 -->
-<div class="player-controls" style="position: absolute; bottom: 20px; left: 0; right: 0; background: rgba(0,0,0,0.6); padding: 8px 0 8px 0; display: flex; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.3s; z-index: 10;">
+<div class="player-controls" style="position: absolute; bottom: 0px; left: 0; right: 0; background: rgba(0,0,0,0.6); padding: 8px 0 8px 0; display: flex; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.3s; z-index: 10;">
     <!-- 进度条 -->
 <div class="progress-container" style="width: 100%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; margin-top: -8px;">
     <div class="progress-buffered" style="width: 0%; height: 100%; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
     <div class="progress-fill" style="width: 0%; height: 100%; background: #e63946; border-radius: 2px;"></div>
 </div>
 <!-- 按钮行 -->
-<div style="display: flex; align-items: center; gap: 12px;">
+<div style="display: flex; align-items: center; gap: 6px;">
     <button class="play-pause-btn" style="background: none; border: none; cursor: pointer; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; margin-left: 20px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3" /></svg>
     </button>
@@ -1652,7 +1654,6 @@
                             unlockEpisode(currentEp);
                             renderEpisodeList();
                             switchEpisode(currentEp);
-                            video.play().catch(e => console.log('自动播放失败:', e));
                             const playPauseBtn = document.querySelector('.play-pause-btn');
                             if (playPauseBtn) {
                                 playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
@@ -1709,17 +1710,9 @@
                 if (breadcrumb) breadcrumb.innerHTML = `<span onclick="switchTo('categoryPage'); renderCategoryPage('${categoryName}');" style="cursor: pointer; color: #e63946;">${categoryName}</span> / ${movieName} / 第${ep}集`;
                 if (title) title.innerHTML = `第${ep}集 · ${movieName}`;
                 renderEpisodeList();
-                // 重置视频进度并播放
                 video.currentTime = 0;
-                setTimeout(() => {
-                    video.play().catch(e => console.log('自动播放失败:', e));
-                    const playPauseBtn = document.querySelector('.play-pause-btn');
-                    if (playPauseBtn) {
-                        playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
-                    }
-                }, 100);
-                // 更新播放按钮图标
-                playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                video.play();
+                playPauseBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
             }
 
             // 页码点击事件
@@ -1860,6 +1853,7 @@
                     if (playPauseBtn) {
                         playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
                     }
+                    
                 });
                 const centerPlayBtn = document.querySelector('.center-play-btn');
 
@@ -2246,7 +2240,7 @@
                         playerControls.style.zIndex = '99999';
                         playerControls.style.opacity = '1';
                         playerControls.style.justifyContent = 'flex-end';
-                        playerControls.style.bottom = isLandscape ? '0px' : '20px';
+                        playerControls.style.bottom = '0px';
 
                         clearTimeout(hideTimer);
                         hideTimer = setTimeout(() => {
