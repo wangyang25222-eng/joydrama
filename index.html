@@ -1248,6 +1248,7 @@
     align-items: center;
     justify-content: center;
     height: 100%;
+    background-color: #000;
 }
 .player-left-inner {
     background: #000;
@@ -1323,7 +1324,7 @@
         <div class="player-container">
             <div class="player-left">
 <div class="player-left-inner" style="${isLandscape ? 'width:100%; height:100%; max-height:100%;' : 'aspect-ratio:9/16;'}">
-    <video id="videoPlayer" src="https://www.w3schools.com/html/mov_bbb.mp4" preload="auto" style="width: 100%; height: 100%; object-fit: cover; object-position: center center; transform: translateZ(0);"></video>
+    <video id="videoPlayer" src="1.mp4" preload="auto" style="width: 100%; height: 100%; object-fit: cover; object-position: center center; transform: translateZ(0);"></video>
     <div class="center-play-btn" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: rgba(0,0,0,0.6); border-radius: 50%; display: none; align-items: center; justify-content: center; cursor: pointer; z-index: 15;">
         <svg width="30" height="30" viewBox="0 0 24 24" fill="white" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>
     </div>
@@ -1334,7 +1335,7 @@
     <button class="unlock-btn" style="background: #e63946; border: none; padding: 10px 30px; border-radius: 30px; color: white; font-size: 16px; cursor: pointer; font-weight: bold;"><span style="color: #f39c12;">✦</span> 10 立即解锁</button>
 </div>
 <!-- 播放器控件 -->
-<div class="player-controls" style="position: absolute; bottom: 0px; left: 0; right: 0; background: rgba(0,0,0,0.6); padding: 8px 0 8px 0; display: flex; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.3s; z-index: 10;">
+<div class="player-controls" style="position: absolute; bottom: 0px; width: 100%; background: rgba(0,0,0,0.6); padding: 8px 0 8px 0; display: flex; flex-direction: column; gap: 8px; opacity: 0; transition: opacity 0.3s; z-index: 10;">
     <!-- 进度条 -->
 <div class="progress-container" style="width: 100%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; cursor: pointer; margin-top: -8px;">
     <div class="progress-buffered" style="width: 0%; height: 100%; background: rgba(255,255,255,0.5); border-radius: 2px;"></div>
@@ -3117,6 +3118,16 @@
 
         let currentPage = 'homePage';
         function switchTo(pageId) {
+            const playerPage = document.getElementById('playerPage');
+            if (playerPage && playerPage.classList.contains('active')) {
+                const video = document.getElementById('videoPlayer');
+                if (video) {
+                    video.pause();
+                    video.src = '';
+                    video.load();
+                }
+                playerPage.remove();
+            }
             document.body.style.paddingBottom = '';
             document.body.style.overflow = '';
             document.querySelectorAll('.top-cat').forEach(c => c.classList.remove('active'));
