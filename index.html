@@ -1213,6 +1213,8 @@
         }
         // 打开播放页面
         function openPlayerPage(movieId, movieName, movieImg, categoryName) {
+            document.body.style.padding = '0';
+            document.body.style.overflowX = 'hidden';
             document.body.style.paddingBottom = '0';
             window.scrollTo(0, 0);
             document.body.style.overflow = 'hidden';
@@ -1235,9 +1237,10 @@
             .player-container {
                 display: flex;
                 gap: 40px;
-                padding: 60px 20px 40px 20px;
-                max-width: 1400px;
-                margin: 0 auto;
+                padding: 60px 0px 0px 0px;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
                 height: 100vh;
                 align-items: stretch;
             }
@@ -1627,6 +1630,7 @@
                             episodePage = i;
                             renderEpisodeList();
                             renderPageButtons();
+                            applyScrollPadding();
                         };
                         container.appendChild(btn);
                     }
@@ -1637,6 +1641,38 @@
                 if (totalSpan) totalSpan.textContent = `共${totalEpisodes}集`;
                 renderPageButtons();
             }
+            // 统一滚动高度
+            function calculateTargetHeight() {
+                const content = document.querySelector('.player-right-content');
+                if (!content) return;
+                if (!window.targetScrollHeight) {
+                    window.targetScrollHeight = content.scrollHeight;
+                }
+            }
+
+            // 应用 padding
+            function applyScrollPadding() {
+                const content = document.querySelector('.player-right-content');
+                if (!content || !window.targetScrollHeight) return;
+                const currentHeight = content.scrollHeight;
+                if (currentHeight < window.targetScrollHeight) {
+                    content.style.paddingBottom = (window.targetScrollHeight - currentHeight) + 'px';
+                } else {
+                    content.style.paddingBottom = '';
+                }
+            }
+
+            // 包装 renderEpisodeList
+            const originalRenderEpisodeList = renderEpisodeList;
+            renderEpisodeList = function () {
+                originalRenderEpisodeList();
+            };
+
+            // 初始化时计算目标高度
+            setTimeout(() => {
+                calculateTargetHeight();
+                applyScrollPadding();
+            }, 100);
 
             function switchEpisode(ep) {
                 currentEpisode = ep;
@@ -1774,6 +1810,7 @@
                         moreBtn.textContent = '收起';
                     }
                     expanded = !expanded;
+                    applyScrollPadding();
                 };
             }
             // 点赞
@@ -3138,6 +3175,8 @@
             }
             document.body.style.paddingBottom = '';
             document.body.style.overflow = '';
+            document.body.style.padding = '';
+            document.body.style.overflowX = '';
             document.querySelectorAll('.top-cat').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
