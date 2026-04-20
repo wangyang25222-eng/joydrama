@@ -158,6 +158,7 @@
         .volume-slider {
             background: #333;
             border-radius: 2px;
+            accent-color: #e63946;
         }
 
         .volume-slider::-webkit-slider-thumb {
@@ -165,7 +166,7 @@
             width: 12px;
             height: 12px;
             border-radius: 50%;
-            background: white;
+            background: #e63946;
             cursor: pointer;
         }
 
@@ -1279,7 +1280,7 @@
                 flex: 1;
                 min-width: 200px;
                 position: relative;
-                padding-left: 40px;
+                padding-left: 16px;
                 min-height: 100vh;
             }
                 .player-right {
@@ -1300,12 +1301,6 @@
                 max-height: calc(100vh - 60px);
                 padding-right: 10px;
             }
-                .player-right-content::after {
-    content: '';
-    display: block;
-    height: calc(100vh - 60px);
-    min-height: 1px;
-}
                 #playerPage {
     height: 100vh;
     overflow: hidden;
