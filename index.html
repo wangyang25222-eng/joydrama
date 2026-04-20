@@ -1698,11 +1698,21 @@
                             deductPoints(10);
                             unlockEpisode(currentEp);
                             renderEpisodeList();
-                            switchEpisode(currentEp);
-                            const playPauseBtn = document.querySelector('.play-pause-btn');
-                            if (playPauseBtn) {
-                                playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
-                            }
+
+                            // 显示解锁成功提示
+                            const lockOverlay = document.querySelector('.player-lock-overlay');
+                            const originalLockHTML = lockOverlay.innerHTML;
+
+                            lockOverlay.innerHTML = `<div style="text-align: center;"><span style="color: #f39c12;">✦10</span><span style="color: #ffffff;"> 解锁成功！</span></div>`;
+
+                            setTimeout(() => {
+                                lockOverlay.innerHTML = originalLockHTML;
+                                switchEpisode(currentEp);
+                                const playPauseBtn = document.querySelector('.play-pause-btn');
+                                if (playPauseBtn) {
+                                    playPauseBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
+                                }
+                            }, 500);
                         } else {
                             showPayModal(currentEp);
                         }
@@ -2034,6 +2044,7 @@
             let volumeHideTimer;
 
             function showPayModal(episodeNum) {
+                showToast('积分不足');
                 const currentPoints = getUserPoints();
                 const modal = document.createElement('div');
                 modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 20000; display: flex; align-items: flex-start; justify-content: center; overflow-y: auto;';
