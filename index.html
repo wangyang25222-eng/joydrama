@@ -174,6 +174,11 @@
             outline: none;
         }
 
+        input:focus {
+            outline: none;
+            border-color: #e63946 !important;
+        }
+
         .lang-item {
             padding: 8px 12px;
             cursor: pointer;
@@ -1056,7 +1061,6 @@
                                 style="vertical-align: middle;">播放积分</span></div>
                     </div>
                 </div>
-                <button class="login-btn" onclick="alert('登录/注册功能开发中')">登录 / 注册</button>
             </div>
             <div style="background: #1f1f1f; border-radius: 16px; padding: 16px;">
                 <div style="display: flex; flex-wrap: wrap; gap: 12px;">
@@ -1074,6 +1078,8 @@
                         onclick="alert('团队指南')">📘 团队</div>
                     <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;"
                         onclick="alert('用户协议')">📄 协议</div>
+                    <div style="background: #2a2a2a; padding: 12px; border-radius: 12px; text-align: center; margin-top: 20px; cursor: pointer;"
+                        onclick="logout()">🚪 退出登录</div>
                 </div>
             </div>
         </div>
@@ -1125,10 +1131,119 @@
             if (!localStorage.getItem('unlockedEpisodes')) {
                 localStorage.setItem('unlockedEpisodes', JSON.stringify([]));
             }
+            if (localStorage.getItem('isLoggedIn') === null) {
+                localStorage.setItem('isLoggedIn', 'false');
+            }
         }
 
         function getUserPoints() {
             return parseInt(localStorage.getItem('userPoints')) || 0;
+        }
+        function isLoggedIn() {
+            return localStorage.getItem('isLoggedIn') === 'true';
+        }
+        function logout() {
+            localStorage.setItem('isLoggedIn', 'false');
+            location.reload();
+        }
+        function showLoginModal() {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 30000; display: flex; align-items: center; justify-content: center;';
+            modal.innerHTML = `
+<div style="background: #f5f5f5; border-radius: 20px; width: 90%; max-width: 800px; min-height: 450px; padding: 40px 30px; position: relative; display: flex; gap: 40px;">
+    <div style="position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #999;" id="loginCloseX">✕</div>
+    <!-- 左侧 -->
+<div style="flex: 1; text-align: center; border-right: 1px solid #ddd; padding-right: 30px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div style="font-size: 24px; font-weight: bold; color: #333; margin-bottom: 0; line-height: 1.2;">下载App</div>
+   <img src="https://picsum.photos/180/180?random=1" style="width: 180px; height: 180px; margin: 0 auto 20px; display: block;">
+    <div style="font-size: 12px; color: #666; margin-top: 10px;">或者打开手机App扫码登录</div>
+</div>
+    <!-- 右侧 -->
+    <div style="flex: 1.5; display: flex; flex-direction: column; justify-content: space-between;">
+        <h2 style="margin: 0 0 20px 0; color: #333; line-height: 1.2; text-align: center;">登录</h2>
+        <input type="text" id="loginUsername" placeholder="请输入你的手机号或邮箱" style="width: 100%; padding: 12px; margin-bottom: 12px; background: #fff; border: 1px solid #eee; border-radius: 8px; color: #333;">
+        <input type="password" id="loginPassword" placeholder="请输入你的密码" style="width: 100%; padding: 12px; margin-bottom: 8px; background: #fff; border: 1px solid #eee; border-radius: 8px; color: #333;">
+        <div style="text-align: right; margin-bottom: 20px;">
+            <span id="forgotPwd" style="color: #e63946; font-size: 12px; cursor: pointer;">忘记密码？</span>
+        </div>
+        <div style="display: flex; gap: 12px; margin-bottom: 20px;">
+            <button id="registerBtn" style="flex: 1; background: transparent; border: 2px solid #e63946; padding: 10px; border-radius: 30px; color: #e63946; font-size: 14px; cursor: pointer;">注册</button>
+            <button id="loginConfirmBtn" style="flex: 1; background: #e63946; border: none; padding: 10px; border-radius: 30px; color: white; font-size: 14px; cursor: pointer; opacity: 0.5;" disabled>登录</button>
+        </div>
+        <div style="border-top: 1px solid #ddd; margin: 20px 0; position: relative;">
+            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #f5f5f5; padding: 0 10px; color: #999; font-size: 12px;">或</span>
+        </div>
+        <div style="display: flex; justify-content: space-around; gap: 10px; flex-wrap: wrap;">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;" class="social-login" data-platform="wechat">
+    <i class="fab fa-weixin" style="font-size: 28px; color: #07c160;"></i>
+    <div style="font-size: 12px; color: #333; font-family: system-ui, sans-serif; font-weight: 500;">微信</div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;" class="social-login" data-platform="douyin">
+    <i class="fab fa-tiktok" style="font-size: 28px; color: #000000;"></i>
+    <div style="font-size: 12px; color: #333; font-family: system-ui, sans-serif; font-weight: 500;">抖音</div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;" class="social-login" data-platform="google">
+    <i class="fab fa-google" style="font-size: 28px; background: linear-gradient(135deg, #4285f4, #ea4335, #fbbc05, #34a853); -webkit-background-clip: text; background-clip: text; color: transparent;"></i>
+    <div style="font-size: 12px; color: #333; font-family: system-ui, sans-serif; font-weight: 500;">Google</div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;" class="social-login" data-platform="facebook">
+    <i class="fab fa-facebook" style="font-size: 28px; color: #1877f2;"></i>
+    <div style="font-size: 12px; color: #333; font-family: system-ui, sans-serif; font-weight: 500;">Facebook</div>
+</div>
+        </div>
+    </div>
+</div>
+    `;
+            document.body.appendChild(modal);
+
+            const usernameInput = document.getElementById('loginUsername');
+            const passwordInput = document.getElementById('loginPassword');
+            const loginBtn = document.getElementById('loginConfirmBtn');
+
+            function checkInputs() {
+                if (usernameInput.value.trim() && passwordInput.value.trim()) {
+                    loginBtn.style.opacity = '1';
+                    loginBtn.disabled = false;
+                } else {
+                    loginBtn.style.opacity = '0.5';
+                    loginBtn.disabled = true;
+                }
+            }
+
+            usernameInput.addEventListener('input', checkInputs);
+            passwordInput.addEventListener('input', checkInputs);
+
+            document.getElementById('loginConfirmBtn').onclick = () => {
+                if (loginBtn.disabled) return;
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('username', usernameInput.value);
+                modal.remove();
+                switchTo('profile');
+                updateProfileCounts();
+            };
+
+            document.getElementById('registerBtn').onclick = () => {
+                if (usernameInput.value.trim() && passwordInput.value.trim()) {
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('username', usernameInput.value);
+                    modal.remove();
+                    switchTo('profile');
+                    updateProfileCounts();
+                } else {
+                    alert('请填写手机号/邮箱和密码');
+                }
+            };
+
+            document.getElementById('forgotPwd').onclick = () => alert('密码重置功能开发中');
+
+            document.querySelectorAll('.social-login').forEach(el => {
+                el.onclick = () => alert(el.dataset.platform + '登录开发中');
+            });
+
+            const closeBtn = document.getElementById('loginCloseX');
+            if (closeBtn) closeBtn.onclick = () => modal.remove();
+
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
         }
 
         function deductPoints(amount) {
@@ -2920,7 +3035,7 @@
 
             container.innerHTML = `
         <div style="padding: 100px 20px 40px 20px;">
-            <h2 style="margin: 0 0 24px 0;">🎁 福利中心</h2>
+            <h2 style="margin: 0 0 24px 0;">🎁福利中心</h2>
             <div style="max-width: 800px; margin: 0 auto;">
                 ${tasksHtml}
             </div>
@@ -3286,7 +3401,13 @@
                 item.classList.add('active');
                 if (pageId === 'homePage') switchTo('homePage');
                 if (pageId === 'following') switchTo('following');
-                if (pageId === 'profile') switchTo('profile');
+                if (pageId === 'profile') {
+                    if (isLoggedIn()) {
+                        switchTo('profile');
+                    } else {
+                        showLoginModal();
+                    }
+                }
             });
         });
 
@@ -3297,7 +3418,11 @@
             });
         });
         document.getElementById('avatarBtn').addEventListener('click', () => {
-            switchTo('profile');
+            if (isLoggedIn()) {
+                switchTo('profile');
+            } else {
+                showLoginModal();
+            }
         });
 
         renderHome();
