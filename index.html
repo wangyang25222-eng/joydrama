@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Joy Drama</title>
+    <title>悦剧</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
@@ -328,7 +328,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 20px;
+            font-size: 28px;
             font-weight: bold;
             color: #ffffff;
             cursor: pointer;
@@ -953,7 +953,7 @@
         <div style="display: flex; align-items: center; gap: 20px;">
             <div class="logo" id="logoBtn">
                 <span class="logo-icon">🎬</span>
-                <span>Joy Drama</span>
+                <span>悦剧</span>
             </div>
             <div class="top-categories" id="topCategories">
                 <span class="top-cat" data-cat="free">免费</span>
@@ -1057,48 +1057,82 @@
     <div id="categoryPage" class="page"></div>
     <div id="searchPage" class="page"></div>
     <div id="profile" class="page">
-        <div style="padding: 16px;">
-            <div class="profile-header">
-                <div class="profile-stats">
-                    <div>
-                        <div class="value" id="favCount">0</div>
-                        <div class="label">收藏</div>
+        <div style="max-width: 1200px; margin: 0 auto; padding: 100px 20px 40px;">
+            <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                <!-- 左侧菜单 -->
+                <div style="width: 260px; flex-shrink: 0;">
+                    <!-- 用户信息卡片 -->
+                    <div style="background: linear-gradient(135deg, #2a2a2a, #1f1f1f); border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #555; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.borderColor='#e63946'" onmouseout="this.style.borderColor='#555'"
+                        onclick="showEditProfileModal()">
+                        <div style="display: flex; align-items: center; gap: 16px;">
+                            <div
+                                style="width: 60px; height: 60px; background: #2a2a2a; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid #555;">
+                                <i class="fas fa-user" style="font-size: 28px; color: #aaa;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 18px; font-weight: bold; margin-bottom: 8px;" id="profileName">用户
+                                </div>
+                                <div style="font-size: 12px; color: #888;">ID: <span id="profileId">100001</span></div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <div class="value" id="historyCount">0</div>
-                        <div class="label">播放记录</div>
+                    <!-- 积分/VIP卡片 -->
+                    <div style="background: #1f1f1f; border-radius: 16px; padding: 16px; margin-top: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span><i class="fas fa-coins" style="color: #f39c12;"></i> 积分</span>
+                            <span style="font-size: 20px; font-weight: bold;" id="profilePoints">0</span>
+                        </div>
+                        <button id="openVipBtn"
+                            style="width: 100%; margin-top: 12px; background: linear-gradient(135deg, #f39c12, #e67e22); border: none; padding: 8px; border-radius: 30px; color: white; cursor: pointer;">开通VIP</button>
                     </div>
-                    <div>
-                        <div class="value" id="userPointsValue">0</div>
-                        <div class="label"><span
-                                style="color: #f39c12; font-size: 18px; vertical-align: middle;">✦</span> <span
-                                style="vertical-align: middle;">播放积分</span></div>
+                    <!-- 导航菜单 -->
+                    <div style="background: #1f1f1f; border-radius: 16px; padding: 8px 0; margin-top: 16px;">
+                        <div class="profile-menu-item active" data-tab="history"
+                            style="padding: 12px 20px; cursor: pointer; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                            <i class="fas fa-history" style="width: 20px;"></i> <span>观看记录</span>
+                        </div>
+                        <div class="profile-menu-item" data-tab="points"
+                            style="padding: 12px 20px; cursor: pointer; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                            <i class="fas fa-gift" style="width: 20px;"></i> <span>获取积分</span>
+                        </div>
+                        <div class="profile-menu-item" data-tab="settings"
+                            style="padding: 12px 20px; cursor: pointer; border-radius: 12px; display: flex; align-items: center; gap: 12px;">
+                            <i class="fas fa-cog" style="width: 20px;"></i> <span>设置</span>
+                        </div>
+                        <div id="logoutBtn"
+                            style="padding: 12px 20px; cursor: pointer; border-top: 1px solid #333; margin-top: 8px; display: flex; align-items: center; gap: 12px; transition: color 0.2s; color: #e63946;"
+                            onmouseover="this.style.color='#c72a3a'; this.querySelector('i').style.color='#c72a3a'; this.querySelector('span').style.color='#c72a3a';"
+                            onmouseout="this.style.color='#e63946'; this.querySelector('i').style.color='#e63946'; this.querySelector('span').style.color='#e63946';"
+                            onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> <span>退出登录</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div style="background: #1f1f1f; border-radius: 16px; padding: 16px;">
-                <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-                    <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;"
-                        onclick="alert('开通经销商')">📦 经销商</div>
-                    <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;"
-                        onclick="alert('制片人')">🎬 制片人</div>
-                    <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;"
-                        onclick="alert('联系我们')">📞 联系</div>
-                    <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;"
-                        onclick="alert('邀请朋友')">👥 邀请</div>
-                    <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;"
-                        onclick="alert('获取积分')">🎁 积分</div>
-                    <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;"
-                        onclick="alert('团队指南')">📘 团队</div>
-                    <div style="flex:1; background:#2a2a2a; padding:12px; border-radius:12px; text-align:center;"
-                        onclick="alert('用户协议')">📄 协议</div>
-                    <div style="background: #2a2a2a; padding: 12px; border-radius: 12px; text-align: center; margin-top: 20px; cursor: pointer;"
-                        onclick="logout()">🚪 退出登录</div>
+                <!-- 右侧内容区 -->
+                <div style="flex: 1; background: #1f1f1f; border-radius: 16px; padding: 20px; min-height: 500px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0;">个人资料</h3>
+                        <button id="editProfileBtn"
+                            style="background: none; border: 1px solid #e63946; color: #e63946; padding: 6px 16px; border-radius: 20px; cursor: pointer;">编辑资料</button>
+                    </div>
+                    <div id="profileInfo">
+                        <div style="margin-bottom: 16px;"><label
+                                style="color: #888; width: 80px; display: inline-block;">昵称</label> <span
+                                id="displayName">用户</span></div>
+                        <div style="margin-bottom: 16px;"><label
+                                style="color: #888; width: 80px; display: inline-block;">手机号</label> <span
+                                id="displayPhone">未绑定</span></div>
+                        <div style="margin-bottom: 16px;"><label
+                                style="color: #888; width: 80px; display: inline-block;">邮箱</label> <span
+                                id="displayEmail">未绑定</span></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
+    </div>
     <div class="bottom-nav">
         <div class="nav-item active" data-page="homePage">首页</div>
         <div class="nav-item" data-page="following">剧场</div>
@@ -1494,12 +1528,15 @@
                     const code = document.getElementById('resetCode').value;
                     const pwd = document.getElementById('newPassword').value;
                     const confirmPwd = document.getElementById('confirmPassword').value;
+                    const contact = document.getElementById('resetEmail').value.trim();
+                    const isEmail = contact.includes('@') && contact.includes('.');
+                    const isPhoneValid = /^\d+$/.test(contact);
 
-                    if (!phone || !code || !pwd || !confirmPwd) {
+                    if (!contact || !code || !pwd || !confirmPwd) {
                         document.getElementById('resetEmailError').style.display = 'block';
                         return;
                     }
-                    if (!isPhoneValid) {
+                    if (!isEmail && !isPhoneValid) {
                         document.getElementById('resetEmailError').style.display = 'block';
                         return;
                     }
@@ -1507,9 +1544,36 @@
                         document.getElementById('confirmPasswordError').style.display = 'block';
                         return;
                     }
-                    // 模拟注册成功
+
+                    // 生成用户ID和昵称
+                    const timestamp = Date.now();
+                    const random = Math.floor(Math.random() * 10000);
+                    const userId = timestamp + '' + random;
+                    const shortId = userId.slice(-8);
+                    const nickname = '悦剧_' + shortId;
+
+                    let userPhone = '', userEmail = '';
+                    if (isEmail) {
+                        userEmail = contact;
+                    } else {
+                        userPhone = contact;
+                    }
+
                     localStorage.setItem('isLoggedIn', 'true');
-                    localStorage.setItem('username', phone);
+                    localStorage.setItem('userId', userId);
+                    localStorage.setItem('shortId', shortId);
+                    localStorage.setItem('nickname', nickname);
+                    localStorage.setItem('username', nickname);
+                    localStorage.setItem('userPhone', userPhone);
+                    localStorage.setItem('userEmail', userEmail);
+
+                    // 刷新个人中心显示
+                    if (document.getElementById('profileName')) document.getElementById('profileName').innerText = nickname;
+                    if (document.getElementById('profileId')) document.getElementById('profileId').innerText = shortId;
+                    if (document.getElementById('displayName')) document.getElementById('displayName').innerText = nickname;
+                    if (document.getElementById('displayPhone')) document.getElementById('displayPhone').innerText = userPhone || '未绑定';
+                    if (document.getElementById('displayEmail')) document.getElementById('displayEmail').innerText = userEmail || '未绑定';
+
                     modal.remove();
                     switchTo('profile');
                     updateProfileCounts();
@@ -1555,7 +1619,15 @@
             };
 
             document.querySelectorAll('.social-login').forEach(el => {
-                el.onclick = () => alert(el.dataset.platform + '登录开发中');
+                el.onclick = () => {
+                    const platform = el.dataset.platform;
+                    let url = '';
+                    if (platform === 'wechat') url = 'https://open.weixin.qq.com/';
+                    else if (platform === 'douyin') url = 'https://developer.open-douyin.com/';
+                    else if (platform === 'google') url = 'https://accounts.google.com/';
+                    else if (platform === 'facebook') url = 'https://www.facebook.com/';
+                    if (url) window.open(url, '_blank');
+                };
             });
 
             const closeBtn = document.getElementById('loginCloseX');
@@ -1644,6 +1716,121 @@
                 userPointsValue.innerText = getUserPoints();
             }
         }
+        function renderProfileData() {
+            // 渲染播放记录
+            const historyContainer = document.getElementById('profileHistoryGrid');
+            if (historyContainer) {
+                if (watchHistory.length === 0) {
+                    historyContainer.innerHTML = '<div class="empty-msg">暂无观看记录</div>';
+                } else {
+                    historyContainer.innerHTML = watchHistory.slice(0, 6).map(item => `
+                <div class="card-wrapper">
+                    <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}" data-category="${item.category}" onclick="addToHistory({id:'${item.id}', name:'${item.name}', img:'${item.img}', category:'${item.category}'})">
+                        <img src="${item.img}">
+                        <div class="card-hover-icons">
+                            <div class="play-icon">
+                                <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-title">${item.name}</div>
+                </div>
+            `).join('');
+                }
+            }
+
+            // 渲染收藏
+            const favContainer = document.getElementById('profileFavoritesGrid');
+            if (favContainer) {
+                if (favorites.length === 0) {
+                    favContainer.innerHTML = '<div class="empty-msg">暂无收藏</div>';
+                } else {
+                    favContainer.innerHTML = favorites.slice(0, 6).map(item => `
+                <div class="card-wrapper">
+                    <div class="card" data-id="${item.id}" data-name="${item.name}" data-img="${item.img}" data-category="${item.category}" onclick="addToHistory({id:'${item.id}', name:'${item.name}', img:'${item.img}', category:'${item.category}'})">
+                        <img src="${item.img}">
+                        <div class="card-hover-icons">
+                            <div class="play-icon">
+                                <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-title">${item.name}</div>
+                </div>
+            `).join('');
+                }
+            }
+
+            // 更新积分显示
+            const pointsSpan = document.getElementById('profilePoints');
+            if (pointsSpan) pointsSpan.innerText = getUserPoints();
+
+            // 更新昵称
+            const nameSpan = document.getElementById('profileName');
+            if (nameSpan) nameSpan.innerText = localStorage.getItem('nickname') || '';
+
+            const idSpan = document.getElementById('profileId');
+            if (idSpan) idSpan.innerText = localStorage.getItem('shortId') || '';
+
+            const displayNameSpan = document.getElementById('displayName');
+            if (displayNameSpan) displayNameSpan.innerText = localStorage.getItem('nickname') || '';
+
+            const phoneSpan = document.getElementById('displayPhone');
+            if (phoneSpan) phoneSpan.innerText = localStorage.getItem('userPhone') || '未绑定';
+
+            const emailSpan = document.getElementById('displayEmail');
+            if (emailSpan) emailSpan.innerText = localStorage.getItem('userEmail') || '未绑定';
+        }
+
+        // 在页面切换时调用
+        function initProfile() {
+            renderProfileData();
+        }
+        function showEditProfileModal() {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 30000; display: flex; align-items: center; justify-content: center;';
+            modal.innerHTML = `
+        <div style="background: #1f1f1f; border-radius: 20px; width: 90%; max-width: 400px; padding: 20px;">
+            <h3 style="margin: 0 0 20px 0;">编辑资料</h3>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 6px;">昵称</label>
+                <input type="text" id="editName" value="${localStorage.getItem('nickname') || ''}" style="width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 8px; color: white;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 6px;">手机号</label>
+                <input type="tel" id="editPhone" value="${localStorage.getItem('userPhone') || '未绑定'}" readonly style="width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 8px; color: #888; cursor: default; outline: none;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 6px;">邮箱</label>
+                <input type="email" id="editEmail" value="${localStorage.getItem('userEmail') || ''}" placeholder="未绑定" style="width: 100%; padding: 10px; background: #2a2a2a; border: 1px solid #444; border-radius: 8px; color: white;">
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button id="saveProfileBtn" style="flex: 1; background: #e63946; border: none; padding: 10px; border-radius: 30px; color: white; cursor: pointer;">保存</button>
+                <button id="cancelEditBtn" style="flex: 1; background: none; border: 1px solid #666; padding: 10px; border-radius: 30px; color: white; cursor: pointer;">取消</button>
+            </div>
+        </div>
+    `;
+            document.body.appendChild(modal);
+
+            document.getElementById('saveProfileBtn').onclick = () => {
+                const newName = document.getElementById('editName').value.trim();
+                console.log('保存的昵称:', newName);
+                if (newName) {
+                    localStorage.setItem('nickname', newName);
+                    document.getElementById('profileName').innerText = newName;
+                    document.getElementById('displayName').innerText = newName;
+                }
+                const newPhone = document.getElementById('editPhone').value.trim();
+                if (newPhone) localStorage.setItem('userPhone', newPhone);
+                const newEmail = document.getElementById('editEmail').value.trim();
+                if (newEmail) localStorage.setItem('userEmail', newEmail);
+                modal.remove();
+            };
+            document.getElementById('cancelEditBtn').onclick = () => modal.remove();
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        }
+
+        document.getElementById('editProfileBtn').onclick = showEditProfileModal;
         // 打开播放页面
         function openPlayerPage(movieId, movieName, movieImg, categoryName) {
             document.body.style.padding = '0';
@@ -1762,7 +1949,6 @@
     height: 48px;
     font-size: 28px;
 }
-            }
         </style>
         <button class="back-btn" onclick="switchTo('homePage')"><span class="arrow">←</span></button>
         <div class="player-container">
@@ -1935,8 +2121,8 @@
             function getShareText() {
                 const titleElem = document.getElementById('shareTitle');
                 const descElem = document.getElementById('shareDesc');
-                const title = titleElem ? titleElem.innerText : 'Joy Drama';
-                const desc = descElem ? descElem.innerText : '精彩短剧，尽在Joy Drama';
+                const title = titleElem ? titleElem.innerText : '悦剧';
+                const desc = descElem ? descElem.innerText : '精彩短剧，尽在悦剧';
                 return `${title}\n${desc}`;
             }
 
@@ -3629,6 +3815,7 @@
                 renderSubPage('freePage', 'free');
                 document.querySelector('.top-cat[data-cat="free"]').classList.add('active');
                 if (pageId === 'profile') {
+                    initProfile();
                     updateProfileCounts();
                 }
             }
@@ -3660,6 +3847,11 @@
             if (pageId === 'following') {
                 renderHistoryGrid();
                 renderFavoritesGrid();
+            }
+            if (pageId === 'profile' && isLoggedIn()) {
+                document.querySelector('.right-area').style.display = 'none';
+            } else {
+                document.querySelector('.right-area').style.display = 'flex';
             }
         }
 
@@ -3744,6 +3936,7 @@
         });
 
         renderHome();
+        initProfile();
         document.body.addEventListener('click', function (e) {
             // 卡片点击（通过 .card 元素）
             const card = e.target.closest('.card');
